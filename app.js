@@ -1,7 +1,8 @@
 /***********************
- * 설정: 여기에 너의 Apps Script 웹앱 URL 넣기
+ * 설정: Cloudflare Worker URL (A안)
+ * - JSONP 제거 / PC 확장프로그램 이슈 해결
  ***********************/
-const API_URL = "https://script.google.com/macros/s/AKfycbwFGQHit5zsaCW0paIQqMRqq6pSZu5ThEzc49mVWU-xT_38XUU1iAmluh5y96sy5Kq-2w/exec"; // ← 반드시 교체!
+const API_URL = "https://welfare-pay-api.gubossi.workers.dev";
 
 let initData = null;
 let lastResult = null;
@@ -93,71 +94,26 @@ function buildNotice(){
 }
 
 /***********************
- * API 호출: POST 우선 → 실패 시 JSONP fallback
+ * API 호출: Cloudflare Worker(fetch)만 사용 (JSONP 제거)
  ***********************/
 async function apiInit(){
-  // 1) GET init (JSON) 먼저 시도
-  const url = `${API_URL}?action=init`;
-  try {
-    const res = await fetch(url, { method: "GET" });
-    const json = await res.json();
-    if (!json.ok) throw new Error(json.message || "init failed");
-    return json.data;
-  } catch (e) {
-    // 2) JSONP fallback
-    return await jsonp(`${API_URL}?action=init`, 12000);
-  }
+  const url = `${API_URL}/api/init`;
+  const res = await fetch(url, { method: "GET" });
+  const json = await res.json();
+  if (!json.ok) throw new Error(json.message || "init failed");
+  return json.data;
 }
 
 async function apiCalc(input){
-  // 1) POST calc 먼저 시도
-  try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(input),
-    });
-    const json = await res.json();
-    if (!json.ok) throw new Error(json.message || "calc failed");
-    return json.result;
-  } catch (e) {
-    // 2) JSONP fallback (GET + inputJson)
-    const inputJson = encodeURIComponent(JSON.stringify(input));
-    const url = `${API_URL}?action=calc&inputJson=${inputJson}`;
-    const json = await jsonp(url, 20000);
-    if (!json.ok) throw new Error(json.message || "calc failed (jsonp)");
-    return json.result;
-  }
-}
-
-function jsonp(url, timeoutMs=15000){
-  return new Promise((resolve, reject) => {
-    const cbName = `__cb_${Math.random().toString(36).slice(2)}`;
-    const timer = setTimeout(() => {
-      cleanup();
-      reject(new Error("JSONP timeout"));
-    }, timeoutMs);
-
-    function cleanup(){
-      clearTimeout(timer);
-      try { delete window[cbName]; } catch {}
-      if (script && script.parentNode) script.parentNode.removeChild(script);
-    }
-
-    window[cbName] = (data) => {
-      cleanup();
-      resolve(data);
-    };
-
-    const sep = url.includes("?") ? "&" : "?";
-    const script = document.createElement("script");
-    script.src = `${url}${sep}callback=${cbName}`;
-    script.onerror = () => {
-      cleanup();
-      reject(new Error("JSONP load error"));
-    };
-    document.body.appendChild(script);
+  const url = `${API_URL}/api/calc`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(input),
   });
+  const json = await res.json();
+  if (!json.ok) throw new Error(json.message || "calc failed");
+  return json.result;
 }
 
 /***********************
@@ -265,7 +221,7 @@ async function onCalc(){
 
   } catch (e) {
     setStatus("");
-    setError(e?.message || String(e));
+    setError("조회 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.\n" + (e?.message || String(e)));
   }
 }
 
@@ -424,7 +380,13 @@ async function init(){
     setStatus("준비 완료");
   } catch (e) {
     setStatus("");
-    setError("초기화 실패: " + (e?.message || String(e)) + "\n\nAPI_URL이 올바른지, Apps Script 웹앱이 '모든 사용자'로 배포되었는지 확인하세요.");
+    setError(
+      "초기화 실패: " + (e?.message || String(e)) +
+      "\n\n다음을 확인하세요:" +
+      "\n1) API_URL(Worker URL)이 올바른지" +
+      "\n2) Worker의 GAS_URL 환경변수가 올바른 Apps Script exec URL인지" +
+      "\n3) Apps Script 웹앱이 '모든 사용자(익명 포함)'로 배포되었는지"
+    );
   }
 }
 
