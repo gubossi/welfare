@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>인건비 구성 이해하기 · 기본급/수당/비과세</title>
+  <meta name="description" content="사회복지시설 종사자 인건비(급여)의 구성 요소(기본급·수당·비과세)를 이해하기 쉽게 설명합니다." />
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 16px; line-height: 1.65; color:#222; }
+    .wrap { max-width: 920px; margin: 0 auto; }
+    .card { border:1px solid #ddd; border-radius:14px; padding:16px; margin: 12px 0; background:#fff; }
+    .muted { color:#666; font-size: 13px; }
+    a.btn { display:inline-block; padding:10px 12px; border:1px solid #ddd; border-radius:10px; text-decoration:none; color:#111; background:#fff; }
+    h1 { font-size: 22px; margin: 0 0 10px; }
+    h2 { font-size: 16px; margin: 18px 0 8px; }
+    li, p { font-size: 14px; }
+    code { background:#f6f6f6; padding:2px 6px; border-radius:6px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <a class="btn" href="../index.html">메인</a>
+      <a class="btn" href="../calculator.html">계산기</a>
+      <a class="btn" href="./insurance-tax.html">4대보험·세금</a>
+    </div>
+
+    <div class="card">
+      <h1>인건비(급여) 구성 이해하기</h1>
+      <p class="muted">
+        급여는 “월급 하나”로 끝나지 않고, <b>기본급(호봉급) + 수당 ± 비과세 − 공제</b> 구조로 이해하는 것이 좋습니다.
+      </p>
+
+      <h2>1) 기본급(호봉급)</h2>
+      <ul>
+        <li>시설 유형·직급·호봉에 따라 정해지는 급여의 기준 금액입니다.</li>
+        <li>계산기에서는 <code>시설유형/직급/호봉</code> 선택을 통해 해당 기본급을 가져옵니다.</li>
+      </ul>
+
+      <h2>2) 수당</h2>
+      <p>대표적으로 다음과 같은 항목이 있을 수 있습니다(기관/지자체에 따라 상이).</p>
+      <ul>
+        <li>가족수당</li>
+        <li>시간외근무수당</li>
+        <li>명절휴가비(연 2회 등)</li>
+        <li>기타 직무/특수근무 관련 수당</li>
+      </ul>
+      <p class="muted">
+        계산기에서는 일부 수당을 “포함 여부” 체크로 반영하며, 기관별 추가수당은 미포함일 수 있습니다.
+      </p>
+
+      <h2>3) 비과세(선택)</h2>
+      <ul>
+        <li>식대 등 일부 항목은 과세/공제 산정에서 제외될 수 있습니다.</li>
+        <li>계산기에서는 <code>월 비과세 금액</code>을 직접 입력하여 추정 계산에 반영할 수 있습니다.</li>
+      </ul>
+
+      <h2>4) 요약: 세전/실수령액 차이</h2>
+      <p>
+        세전 총지급액(기본급+수당)은 같아도,
+        비과세/공제/세금 조건에 따라 실수령액은 달라질 수 있습니다.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>다음으로 읽으면 좋은 내용</h2>
+      <ul>
+        <li><a href="./insurance-tax.html">4대보험·세금(간이세액표) 이해하기</a></li>
+        <li><a href="../calculator.html">급여 계산기에서 확인하기</a></li>
+      </ul>
+      <p class="muted">※ 본 페이지는 정보 제공 목적이며 실제 지급액은 기관 규정에 따릅니다.</p>
+    </div>
+  </div>
+</body>
+</html>
