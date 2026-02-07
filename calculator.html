@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>급여 계산기 · 사회복지시설 종사자 인건비</title>
+  <meta name="description" content="시설 유형·직급·호봉 및 일부 조건을 입력하여 사회복지시설 종사자 급여(인건비)를 추정 계산합니다." />
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 16px; line-height: 1.45; }
+    .card { border: 1px solid #ddd; border-radius: 12px; padding: 14px; margin-bottom: 12px; background:#fff; }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; }
+    label { display: block; font-size: 12px; color: #444; margin-bottom: 4px; }
+    select, input { padding: 10px; border: 1px solid #ccc; border-radius: 10px; min-width: 200px; }
+    button { padding: 10px 14px; border: 0; border-radius: 10px; cursor: pointer; }
+    .muted { color:#666; font-size: 12px; }
+    .big { font-size: 18px; font-weight: 700; }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    th, td { border-bottom: 1px solid #eee; padding: 8px; text-align: left; }
+    .pill { display:inline-flex; gap:8px; align-items:center; border:1px solid #eee; padding:8px 10px; border-radius:999px; }
+    .kpi { display:flex; flex-wrap:wrap; gap:10px; margin-top:10px; }
+    .kpi .box { flex: 1 1 240px; border:1px solid #eee; border-radius:12px; padding:12px; }
+    .kpi .title { font-size:12px; color:#666; }
+    .kpi .value { font-size:18px; font-weight:700; margin-top:4px; }
+    .error { color:#b00020; font-size: 13px; margin-top: 8px; white-space: pre-wrap; }
+    a.btn { display:inline-block; padding:10px 12px; border:1px solid #ddd; border-radius:10px; text-decoration:none; color:#111; background:#fff; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="row" style="justify-content:space-between; align-items:center;">
+      <div>
+        <div style="font-weight:800; font-size:18px;">급여 계산기</div>
+        <div class="muted">※ 결과는 참고용 ‘추정치’이며 실제 지급액과 차이가 날 수 있습니다.</div>
+      </div>
+      <div class="row">
+        <a class="btn" href="./index.html">메인(안내)로</a>
+        <a class="btn" href="./guide/pay-structure.html">인건비 구성</a>
+        <a class="btn" href="./guide/insurance-tax.html">4대보험·세금</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ 아래는 네가 쓰던 계산기 UI (inputCard/resultCard) 그대로 -->
+  <div class="card" id="inputCard">
+    <div class="row">
+      <div>
+        <label>기준년도</label>
+        <select id="year"></select>
+      </div>
+      <div>
+        <label>근무시설 유형</label>
+        <select id="facilityType"></select>
+      </div>
+      <div>
+        <label>직급</label>
+        <select id="grade"></select>
+      </div>
+      <div>
+        <label>호봉</label>
+        <select id="step"></select>
+      </div>
+    </div>
+
+    <div style="margin-top:14px;">
+      <div class="muted">비과세(선택)</div>
+      <div class="row" style="margin-top:6px;">
+        <div>
+          <label>월 비과세 금액(식대 등)</label>
+          <input id="nonTaxableMonthly" type="number" min="0" value="0" />
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px;">
+      <div class="muted">가족수당 입력</div>
+      <div class="row" style="margin-top:6px;">
+        <div class="pill">
+          <input id="spouse" type="checkbox" />
+          <span>배우자</span>
+        </div>
+        <div>
+          <label>자녀 수</label>
+          <input id="children" type="number" min="0" value="0" />
+        </div>
+        <div>
+          <label>기타 부양가족(최대 4)</label>
+          <input id="otherDependents" type="number" min="0" max="4" value="0" />
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px;">
+      <div class="muted">시간외수당 입력</div>
+      <div class="row" style="margin-top:6px;">
+        <div>
+          <label>월 시간외(시간)</label>
+          <input id="overtimeHours" type="number" min="0" value="0" />
+        </div>
+        <div>
+          <label>가산 종류</label>
+          <select id="overtimeKind">
+            <option value="1.5">연장/야간 (1.5배)</option>
+            <option value="1.5">휴일 8시간 이내 (1.5배)</option>
+            <option value="2.0">휴일 8시간 초과 (2.0배)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px;">
+      <div class="muted">수당 포함</div>
+      <div id="allowanceChecks" class="row" style="margin-top:6px;"></div>
+
+      <div class="row" style="margin-top:10px;">
+        <label class="pill">
+          <input id="includeDeductions" type="checkbox" />
+          <span>4대보험 공제(추정) 포함</span>
+        </label>
+        <label class="pill">
+          <input id="includeTax" type="checkbox" />
+          <span>세금(간이세액표) 포함</span>
+        </label>
+      </div>
+      <div class="muted" style="margin-top:6px;">
+        ※ 국세청의 근로소득 간이세액표를 참고합니다.
+      </div>
+    </div>
+
+    <div style="margin-top:14px;" class="row">
+      <button id="btnCalc">계산하기</button>
+      <button id="btnDownload" style="border:1px solid #ddd; background:#fff;">엑셀(CSV) 다운로드</button>
+    </div>
+
+    <div id="status" class="muted" style="margin-top:10px;"></div>
+    <div id="error" class="error"></div>
+    <p class="muted">※ 계산이 실행되지 않거나 로딩이 지연될 경우, 잠시 후 다시 시도해 주세요.</p>
+  </div>
+
+  <div class="card" id="resultCard" style="display:none;">
+    <div class="row" style="justify-content:space-between; align-items:flex-start;">
+      <div>
+        <div class="big">결과</div>
+        <div class="muted" id="resultMeta"></div>
+      </div>
+    </div>
+
+    <div class="kpi" id="kpiBoxes"></div>
+
+    <div style="margin-top:12px;">
+      <div class="muted">월 수당(내역)</div>
+      <table id="monthlyTable"></table>
+    </div>
+
+    <div style="margin-top:12px;">
+      <div class="muted">연 수당(내역)</div>
+      <table id="yearlyTable"></table>
+    </div>
+
+    <div id="deductionCard" style="margin-top:12px; display:none;">
+      <div class="muted">4대보험 공제(추정) 내역</div>
+      <table id="deductionTable"></table>
+      <div class="muted" style="margin-top:4px;">※ 요율/상·하한/반올림은 설정값에 따라 일부 오차가 발생할 수 있습니다.</div>
+    </div>
+
+    <div id="taxCard" style="margin-top:12px; display:none;">
+      <div class="muted">세금(간이세액표 기반) 내역</div>
+      <table id="taxTable"></table>
+      <div class="muted" style="margin-top:4px;">※ 근로소득간이세액표 기준 추정값입니다.</div>
+    </div>
+
+    <div style="margin-top:12px; padding:12px; border:1px solid #eee; border-radius:12px;">
+      <div class="muted" style="font-weight:700; color:#444;">안내</div>
+      <div class="muted" style="margin-top:6px;" id="noticeText"></div>
+    </div>
+  </div>
+
+  <!-- ✅ Worker 버전 app.js -->
+  <script src="./app.js"></script>
+</body>
+</html>
