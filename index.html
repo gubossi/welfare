@@ -1,115 +1,437 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>사회복지시설 종사자 내 급여 알아보기</title>
-  <meta name="description" content="사회복지시설 종사자 급여(인건비) 구조(기본급·수당·공제·세금)를 안내하고 급여 계산기로 연결합니다." />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>사회복지시설 종사자 급여 계산기 | Welmoa</title>
+  <meta name="description" content="사회복지시설 종사자 급여 구조를 이해하고 기본급, 수당, 공제, 실수령액을 확인할 수 있는 Welmoa 급여 계산기입니다.">
+  <link rel="stylesheet" href="/assets/site.css">
+
   <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 16px; line-height: 1.65; color:#222; }
-    .wrap { max-width: 980px; margin: 0 auto; }
-    .card { border:1px solid #ddd; border-radius:14px; padding:16px; margin: 12px 0; background:#fff; }
-    h1 { font-size: 26px; margin: 0 0 10px; }
-    h2 { font-size: 18px; margin: 18px 0 8px; }
-    p, li { font-size: 14px; }
-    .muted { color:#666; font-size: 13px; }
-    .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-    .btn {
-      display:inline-block; padding:12px 14px; border-radius: 10px; border: 1px solid #ddd;
-      text-decoration:none; font-weight:700; background:#fff; color:#111;
+    .salary-layout {
+      display: grid;
+      grid-template-columns: 1.3fr 0.9fr;
+      gap: 16px;
     }
-    .btn.primary { background:#111; color:#fff; border-color:#111; }
-    nav a { margin-right:10px; }
-    .grid { display:grid; grid-template-columns: 1fr; gap:12px; }
-    @media (min-width: 960px){ .grid { grid-template-columns: 2fr 1fr; } }
-    .list a { display:block; padding:10px 12px; border:1px solid #eee; border-radius:12px; text-decoration:none; color:#111; margin-top:10px; }
-    .list a:hover { background:#fafafa; }
-    footer { margin: 18px 0; }
-    .pill { display:inline-block; padding:4px 10px; border-radius:999px; border:1px solid #eee; margin-right:6px; margin-top:6px; font-size:12px; color:#555; }
+
+    .salary-subgrid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .salary-card-title {
+      margin: 0 0 14px;
+      font-size: 1.2rem;
+      font-weight: 800;
+      line-height: 1.35;
+      color: var(--text);
+    }
+
+    .salary-form label {
+      display: block;
+      margin-top: 12px;
+      margin-bottom: 6px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .salary-form input,
+    .salary-form select,
+    .salary-form textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font: inherit;
+      line-height: 1.5;
+      background: #fff;
+      color: var(--text);
+    }
+
+    .salary-form textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .salary-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .btn-primary {
+      background: #3559a8;
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .btn-primary:hover {
+      background: #2c4a8a;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: #fff;
+      color: #3559a8;
+      border: 1px solid #d9e6ff;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .btn-secondary:hover {
+      background: #f3f7ff;
+    }
+
+    .result-box {
+      display: grid;
+      gap: 10px;
+    }
+
+    .result-row {
+      margin: 0;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--surface-soft);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .result-row strong {
+      color: var(--text);
+    }
+
+    .quick-links {
+      display: grid;
+      gap: 12px;
+    }
+
+    .quick-link-card {
+      display: block;
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      transition: all 0.18s ease;
+    }
+
+    .quick-link-card:hover {
+      background: #fbfdff;
+      box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .quick-link-card h3 {
+      margin: 0 0 6px;
+      font-size: 1rem;
+      color: var(--text);
+    }
+
+    .quick-link-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .salary-note {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 860px) {
+      .salary-layout {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-
-    <header class="card">
-      <div class="row" style="justify-content:space-between;">
-        <div>
-          <h1>사회복지시설 종사자 급여(인건비) 안내</h1>
-          <div class="muted">
-            기본급(호봉)·수당·4대보험 공제·세금 구조를 이해하고, 계산기로 참고 금액을 확인해 볼 수 있습니다.
-          </div>
-        </div>
-        <div class="row">
-          <a class="btn primary" href="./calculator.html">급여 계산기</a>
-        </div>
-      </div>
-
-      <nav class="muted" style="margin-top:10px;">
-        <a href="./guide/pay-structure.html">인건비 구성</a>
-        <a href="./guide/insurance-tax.html">4대보험·세금</a>
-        <a href="./about.html">사이트 안내</a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/">Welmoa</a>
+      <nav>
+        <a href="/">홈</a>
+        <a href="https://tools.welmoa.kr/tools/">도구</a>
+        <a href="/blog/">콘텐츠</a>
+        <a href="/about/">소개</a>
+        <a href="/privacy/">개인정보처리방침</a>
+        <a href="/terms/">이용약관</a>
       </nav>
+    </div>
+  </header>
 
-      <div style="margin-top:10px;">
-        <span class="pill">기본급/호봉</span>
-        <span class="pill">수당</span>
-        <span class="pill">4대보험</span>
-        <span class="pill">간이세액</span>
-      </div>
-    </header>
+  <main class="container">
+    <section class="hero">
+      <div class="hero-card">
+        <div class="badge">급여 계산 도구</div>
+        <h1>사회복지시설 종사자 급여 계산기</h1>
+        <p class="lead">
+          기본급, 수당, 4대보험, 공제 구조를 이해하고 참고용 실수령액을 빠르게 확인할 수 있습니다.
+        </p>
 
-    <div class="grid">
-      <main class="card">
-        <h2>이 사이트에서 제공하는 정보</h2>
-        <ul>
-          <li><b>인건비(급여) 구성 요소</b>: 기본급(호봉급)·수당·비과세·공제 항목의 구조</li>
-          <li><b>실수령액이 달라지는 이유</b>: 4대보험, 세금, 비과세 적용 여부, 기관 규정/지자체 수당 등</li>
-          <li><b>급여 계산기</b>: 시설 유형·직급·호봉과 일부 조건을 기반으로 월/연 세전·실수령액(추정)을 계산</li>
-        </ul>
-
-        <h2>자주 생기는 혼동 포인트</h2>
-        <ul>
-          <li>“월급”은 기본급만 의미하는 경우가 많아, 수당·공제 포함 여부를 분리해서 확인하는 것이 중요</li>
-          <li>비과세(식대 등)는 과세/공제 산정에서 제외될 수 있어, 세전 총지급과 실수령액 차이 발생</li>
-          <li>세금은 근로소득득간이세액표를 바탕으로 한 추정치이며, 실제 원천징수액과 차이가 날 수 있음</li>
-        </ul>
-
-        <h2>바로가기</h2>
-        <div class="list">
-          <a href="./calculator.html"><b>급여 계산기</b><br><span class="muted">시설 유형·직급·호봉 선택 후 추정 결과 확인</span></a>
-          <a href="./guide/pay-structure.html"><b>인건비 구성(기본급/수당/비과세)</b><br><span class="muted">항목별 의미와 확인 방법</span></a>
-          <a href="./guide/insurance-tax.html"><b>4대보험·세금(간이세액표) 이해하기</b><br><span class="muted">공제 구조와 주의사항</span></a>
+        <div class="hero-actions">
+          <a class="btn-primary" href="#salary-calculator">급여 계산하기</a>
+          <a class="btn-secondary" href="/blog/salary-guide.html">급여 가이드 보기</a>
         </div>
+      </div>
+    </section>
 
-        <h2>면책</h2>
-        <p class="muted">
-          본 사이트는 정보 제공 및 참고용 계산을 위한 페이지입니다. 계산 결과는 입력값과 공개 기준을 바탕으로 산출한 ‘추정치’이며,
-          실제 지급액은 기관 규정, 지자체 추가수당, 비과세 적용, 개인별 세액/보험료 산정 방식 등에 따라 달라질 수 있습니다.
-        </p>
-      </main>
+    <section class="section" id="salary-calculator">
+      <h2 class="section-title">급여 계산</h2>
 
-      <aside class="card">
-        <h2>처음 방문하셨나요?</h2>
-        <ol>
-          <li><a href="./guide/pay-structure.html">인건비 구성</a>을 먼저 읽고</li>
-          <li><a href="./guide/insurance-tax.html">4대보험·세금</a>을 확인한 뒤</li>
-          <li><a href="./calculator.html">계산기</a>에서 참고 금액을 계산해보세요.</li>
-        </ol>
+      <div class="salary-layout">
+        <div class="card salary-form">
+          <h3 class="salary-card-title">기본 정보 입력</h3>
 
-        <h2 style="margin-top:18px;">문의/제안</h2>
-        <p class="muted">
-          개선 제안이나 오류 제보는 <a href="./about.html">사이트 안내</a> 페이지의 안내를 참고해 주세요.
-        </p>
-      </aside>
+  <!-- ✅ 아래는 네가 쓰던 계산기 UI (inputCard/resultCard) 그대로 -->
+  <div class="card" id="inputCard">
+    <div class="row">
+      <div>
+        <label>기준년도</label>
+        <select id="year"></select>
+      </div>
+      <div>
+        <label>근무시설 유형</label>
+        <select id="facilityType"></select>
+      </div>
+      <div>
+        <label>직급</label>
+        <select id="grade"></select>
+      </div>
+      <div>
+        <label>호봉</label>
+        <select id="step"></select>
+      </div>
     </div>
 
-    <footer class="muted">
-      © 급여(인건비) 안내 · <a href="./calculator.html">급여 계산기</a> · <a href="./about.html">사이트 안내</a>
-    </footer>
+    <div style="margin-top:14px;">
+      <div class="muted">비과세(선택)</div>
+      <div class="row" style="margin-top:6px;">
+        <div>
+          <label>월 비과세 금액(식대 등)</label>
+          <input id="nonTaxableMonthly" type="number" min="0" value="0" />
+        </div>
+      </div>
+    </div>
 
+    <div style="margin-top:14px;">
+      <div class="muted">가족수당 입력</div>
+      <div class="row" style="margin-top:6px;">
+        <div class="pill">
+          <input id="spouse" type="checkbox" />
+          <span>배우자</span>
+        </div>
+        <div>
+          <label>자녀 수</label>
+          <input id="children" type="number" min="0" value="0" />
+        </div>
+        <div>
+          <label>기타 부양가족(최대 4)</label>
+          <input id="otherDependents" type="number" min="0" max="4" value="0" />
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px;">
+      <div class="muted">시간외수당 입력</div>
+      <div class="row" style="margin-top:6px;">
+        <div>
+          <label>월 시간외(시간)</label>
+          <input id="overtimeHours" type="number" min="0" value="0" />
+        </div>
+        <div>
+          <label>가산 종류</label>
+          <select id="overtimeKind">
+            <option value="1.5">연장/야간 (1.5배)</option>
+            <option value="1.5">휴일 8시간 이내 (1.5배)</option>
+            <option value="2.0">휴일 8시간 초과 (2.0배)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px;">
+      <div class="muted">수당 포함</div>
+      <div id="allowanceChecks" class="row" style="margin-top:6px;"></div>
+
+      <div class="row" style="margin-top:10px;">
+        <label class="pill">
+          <input id="includeDeductions" type="checkbox" />
+          <span>4대보험 공제(추정) 포함</span>
+        </label>
+        <label class="pill">
+          <input id="includeTax" type="checkbox" />
+          <span>세금(간이세액표) 포함</span>
+        </label>
+      </div>
+      <div class="muted" style="margin-top:6px;">
+        ※ 국세청의 근로소득 간이세액표를 참고합니다.
+      </div>
+    </div>
+
+    <div style="margin-top:14px;" class="row">
+      <button id="btnCalc">계산하기</button>
+      <button id="btnDownload" style="border:1px solid #ddd; background:#fff;">엑셀(CSV) 다운로드</button>
+    </div>
+
+    <div id="status" class="muted" style="margin-top:10px;"></div>
+    <div id="error" class="error"></div>
+    <p class="muted">※ 계산이 실행되지 않거나 로딩이 지연될 경우, 잠시 후 다시 시도해 주세요.</p>
   </div>
+
+
+
+
+        </div>
+
+        <div class="salary-subgrid">
+          <div class="card">
+            <h3 class="salary-card-title">계산 결과</h3>
+
+            <!-- 기존 계산 결과 영역 넣기 -->
+  <div class="card" id="resultCard" style="display:none;">
+    <div class="row" style="justify-content:space-between; align-items:flex-start;">
+      <div>
+        <div class="big">결과</div>
+        <div class="muted" id="resultMeta"></div>
+      </div>
+    </div>
+
+    <div class="kpi" id="kpiBoxes"></div>
+
+    <div style="margin-top:12px;">
+      <div class="muted">월 수당(내역)</div>
+      <table id="monthlyTable"></table>
+    </div>
+
+    <div style="margin-top:12px;">
+      <div class="muted">연 수당(내역)</div>
+      <table id="yearlyTable"></table>
+    </div>
+
+    <div id="deductionCard" style="margin-top:12px; display:none;">
+      <div class="muted">4대보험 공제(추정) 내역</div>
+      <table id="deductionTable"></table>
+      <div class="muted" style="margin-top:4px;">※ 요율/상·하한/반올림은 설정값에 따라 일부 오차가 발생할 수 있습니다.</div>
+    </div>
+
+    <div id="taxCard" style="margin-top:12px; display:none;">
+      <div class="muted">세금(근로소득간이세액표 기반) 내역</div>
+      <table id="taxTable"></table>
+      <div class="muted" style="margin-top:4px;">※근로소득간이세액표 기준 추정값입니다.</div>
+    </div>
+
+    <div style="margin-top:12px; padding:12px; border:1px solid #eee; border-radius:12px;">
+      <div class="muted" style="font-weight:700; color:#444;">안내</div>
+      <div class="muted" style="margin-top:6px;" id="noticeText"></div>
+    </div>
+  </div>
+ </div>
+
+
+          </div>
+
+          <div class="card">
+            <h3 class="salary-card-title">처음 방문하셨나요?</h3>
+
+            <!-- 기존 처음 방문/도움말 내용 넣기 -->
+            <p class="salary-note">
+              먼저 급여 구조와 공제 흐름을 이해한 뒤 계산기를 활용하면 결과를 더 쉽게 해석할 수 있습니다.
+            </p>
+
+            <div class="quick-links" style="margin-top: 14px;">
+              <a class="quick-link-card" href="/salary/guide/pay-structure.html">
+                <h3>급여 구조 이해하기</h3>
+                <p>기본급, 수당, 공제, 실수령액 흐름 정리</p>
+              </a>
+
+              <a class="quick-link-card" href="/salary/guide/insurance-tax.html">
+                <h3>4대보험 이해하기</h3>
+                <p>공제 구조와 실무 체크 포인트 확인</p>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">안내 및 체크 포인트</h2>
+
+      <div class="salary-layout">
+        <div class="card">
+          <h3 class="salary-card-title">이 도구에서 제공하는 정보</h3>
+
+          <!-- 기존 안내/설명 내용 넣기 -->
+          <!-- 예:
+          <ul class="list-clean">
+            <li>기본급과 수당 구조 이해</li>
+            <li>4대보험과 세금 흐름 확인</li>
+            <li>실수령액 참고 계산</li>
+          </ul>
+          -->
+
+          <h3 class="salary-card-title" style="margin-top: 24px;">자주 생기는 혼동 포인트</h3>
+          <ul class="list-clean">
+            <li>기본급과 실수령액은 다를 수 있습니다.</li>
+            <li>수당 포함 여부에 따라 결과가 달라질 수 있습니다.</li>
+            <li>실제 지급액은 기관 기준과 개인별 조건에 따라 차이가 날 수 있습니다.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3 class="salary-card-title">바로가기</h3>
+
+          <div class="quick-links">
+            <a class="quick-link-card" href="/blog/salary-guide.html">
+              <h3>급여 계산 방법 총정리</h3>
+              <p>기본급, 수당, 공제 구조를 한 번에 이해하기</p>
+            </a>
+
+            <a class="quick-link-card" href="/blog/take-home-pay.html">
+              <h3>실수령액 계산 방법</h3>
+              <p>총지급액과 공제 흐름 쉽게 이해하기</p>
+            </a>
+
+            <a class="quick-link-card" href="/blog/family-allowance.html">
+              <h3>가족수당 지급 기준</h3>
+              <p>실무에서 자주 확인하는 수당 기준 정리</p>
+            </a>
+          </div>
+
+          <h3 class="salary-card-title" style="margin-top: 24px;">면책</h3>
+          <p class="salary-note">
+            본 도구는 급여 구조 이해와 참고용 계산을 위한 페이지입니다.
+            실제 지급액은 기관 기준, 지자체 추가수당, 과세 여부, 개인별 공제 조건 등에 따라 달라질 수 있습니다.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>© Welmoa. 사회복지 실무자를 위한 도구와 정보 플랫폼</div>
+      <div class="footer-links">
+        <a href="/about/">소개</a>
+        <a href="/privacy/">개인정보처리방침</a>
+        <a href="/terms/">이용약관</a>
+        <a href="/blog/">콘텐츠 모음</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
-
-
-
