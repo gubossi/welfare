@@ -38,9 +38,12 @@ function renderTable(tableId, items){
   `;
 }
 
-function renderKpis(res){
+function renderKpis(res, input){
+  const otherAllowance = Number(input?.otherAllowance || 0);
+  const adjustedMonthlyAllowanceSum = Number(res.monthlyAllowanceSum || 0) + otherAllowance;
+
   const baseAnnual = res.baseMonthly * 12;
-  const monthlyAllowAnnual = res.monthlyAllowanceSum * 12;
+  const monthlyAllowAnnual = adjustedMonthlyAllowanceSum * 12;
   const yearlyAllow = res.yearlyAllowanceSum;
 
   $("kpiBoxes").innerHTML = `
@@ -110,6 +113,7 @@ function escapeHtml(s){
 function buildNotice(){
   return [
     "• 본 결과는 인건비 가이드라인 및 입력값을 바탕으로 산출한 ‘추정’ 값입니다.",
+    "• 기타 수당은 사용자가 직접 입력한 월 기준 금액을 반영합니다.",
     "• 4대보험은 설정된 요율/반올림 규칙을 적용한 추정치입니다.",
     "• 세금(소득세/지방소득세)은 TAX_TABLE(간이세액표) 기반 추정치입니다.",
     "• 지자체 추가수당, 기관 규정, 비과세 적용, 원천징수 방식 등에 따라 실제 지급액은 달라질 수 있습니다."
@@ -201,6 +205,7 @@ async function onCalc(){
       includeDeductions: $("includeDeductions").checked,
       includeTax: $("includeTax").checked,
       nonTaxableMonthly: Number($("nonTaxableMonthly").value || 0),
+      otherAllowance: Number($("otherAllowance")?.value || 0),
       family: {
         spouse: $("spouse").checked,
         children: Number($("children").value || 0),
@@ -219,7 +224,16 @@ async function onCalc(){
     $("resultCard").style.display = "block";
     $("resultMeta").textContent = `${input.year} · ${input.facilityType} · ${input.grade} · ${input.step}호봉`;
 
-    renderKpis(res);
+    renderKpis(res, input);
+
+    const monthlyAllowancesForView = [...(res.monthlyAllowances || [])];
+    if ((input.otherAllowance || 0) > 0) {
+      monthlyAllowancesForView.push({
+        name: "기타 수당",
+        amount: Number(input.otherAllowance || 0)
+      });
+    }
+    
     renderTable("monthlyTable", res.monthlyAllowances);
     renderTable("yearlyTable", res.yearlyAllowances);
 
