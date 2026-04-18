@@ -19,12 +19,13 @@ function setOptions(el, arr){
   el.innerHTML = "";
   (arr || []).forEach(v => {
     const opt = document.createElement("option");
-    opt.value = v; opt.textContent = v;
+    opt.value = v;
+    opt.textContent = v;
     el.appendChild(opt);
   });
 }
 
-function money(n){ return Number(n||0).toLocaleString("ko-KR") + "원"; }
+function money(n){ return Number(n || 0).toLocaleString("ko-KR") + "원"; }
 
 function renderTable(tableId, items){
   const t = $(tableId);
@@ -34,16 +35,13 @@ function renderTable(tableId, items){
   }
   t.innerHTML = `
     <tr><th>항목</th><th>금액</th></tr>
-    ${items.map(x=>`<tr><td>${escapeHtml(x.name)}</td><td>${money(x.amount)}</td></tr>`).join("")}
+    ${items.map(x => `<tr><td>${escapeHtml(x.name)}</td><td>${money(x.amount)}</td></tr>`).join("")}
   `;
 }
 
-function renderKpis(res, input){
-  const otherAllowance = Number(input?.otherAllowance || 0);
-  const adjustedMonthlyAllowanceSum = Number(res.monthlyAllowanceSum || 0) + otherAllowance;
-
+function renderKpis(res){
   const baseAnnual = res.baseMonthly * 12;
-  const monthlyAllowAnnual = adjustedMonthlyAllowanceSum * 12;
+  const monthlyAllowAnnual = res.monthlyAllowanceSum * 12;
   const yearlyAllow = res.yearlyAllowanceSum;
 
   $("kpiBoxes").innerHTML = `
@@ -121,7 +119,7 @@ function buildNotice(){
 }
 
 /***********************
- * API 호출: Cloudflare Worker(fetch)만 사용 (JSONP 제거)
+ * API 호출: Cloudflare Worker(fetch)만 사용
  ***********************/
 async function apiInit(){
   const url = `${API_URL}/api/init`;
@@ -149,12 +147,12 @@ async function apiCalc(input){
 function buildAllowanceChecks(rules){
   const wrap = $("allowanceChecks");
   wrap.innerHTML = "";
-  rules.forEach(r=>{
+  rules.forEach(r => {
     const div = document.createElement("div");
     div.style.minWidth = "240px";
     div.innerHTML = `
       <label class="pill">
-        <input type="checkbox" id="allow_${escapeHtml(r.code)}" ${r.enabledDefault ? "checked":""}/>
+        <input type="checkbox" id="allow_${escapeHtml(r.code)}" ${r.enabledDefault ? "checked" : ""}/>
         <span>${escapeHtml(r.name)}</span>
         <span class="muted">(${r.unit === "yearly" ? "연" : "월"})</span>
       </label>`;
@@ -164,7 +162,7 @@ function buildAllowanceChecks(rules){
 
 function getEnabledAllowances(){
   const enabled = {};
-  (initData?.rules || []).forEach(r=>{
+  (initData?.rules || []).forEach(r => {
     enabled[r.code] = $(`allow_${r.code}`)?.checked || false;
   });
   return enabled;
@@ -184,7 +182,7 @@ function onGradeChange(){
   const facility = $("facilityType").value;
   const grade = $("grade").value;
   const maxStep = initData.payMeta.maxStepByFacGrade?.[facility]?.[grade] || 31;
-  const steps = Array.from({length: maxStep}, (_,i)=>String(i+1));
+  const steps = Array.from({ length: maxStep }, (_, i) => String(i + 1));
   setOptions($("step"), steps);
 }
 
@@ -220,20 +218,10 @@ async function onCalc(){
     const res = await apiCalc(input);
     lastResult = { input, res };
 
-    // 화면 출력
     $("resultCard").style.display = "block";
     $("resultMeta").textContent = `${input.year} · ${input.facilityType} · ${input.grade} · ${input.step}호봉`;
 
-    renderKpis(res, input);
-
-    const monthlyAllowancesForView = [...(res.monthlyAllowances || [])];
-    if ((input.otherAllowance || 0) > 0) {
-      monthlyAllowancesForView.push({
-        name: "기타 수당",
-        amount: Number(input.otherAllowance || 0)
-      });
-    }
-    
+    renderKpis(res);
     renderTable("monthlyTable", res.monthlyAllowances);
     renderTable("yearlyTable", res.yearlyAllowances);
 
@@ -254,7 +242,7 @@ async function onCalc(){
     $("noticeText").textContent = buildNotice();
 
     setStatus("완료");
-    $("resultCard").scrollIntoView({ behavior:"smooth", block:"start" });
+    $("resultCard").scrollIntoView({ behavior: "smooth", block: "start" });
 
   } catch (e) {
     setStatus("");
@@ -284,15 +272,17 @@ const TAX_LABELS = {
 
 function csvEscape(v){
   const s = (v === null || v === undefined) ? "" : String(v);
-  if (/[",\n]/.test(s)) return `"${s.replace(/"/g,'""')}"`;
+  if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
   return s;
 }
+
 function formatNumberForCsv(v){
   if (v === null || v === undefined || v === "") return "";
   const n = Number(v);
   if (!Number.isFinite(n)) return csvEscape(v);
-  return String(Math.round(n)); // 엑셀 숫자 인식(콤마 없이)
+  return String(Math.round(n));
 }
+
 function buildFriendlyCsv(last){
   const { input, res } = last;
   const lines = [];
@@ -305,7 +295,7 @@ function buildFriendlyCsv(last){
     ["근무시설 유형", input.facilityType],
     ["직급", input.grade],
     ["호봉", input.step + "호봉"],
-  ].forEach(([k,v])=>lines.push(`${csvEscape(k)},${csvEscape(v)}`));
+  ].forEach(([k, v]) => lines.push(`${csvEscape(k)},${csvEscape(v)}`));
   lines.push("");
 
   lines.push("핵심 금액");
@@ -313,13 +303,14 @@ function buildFriendlyCsv(last){
   [
     ["월 기본급", res.baseMonthly],
     ["월 수당 합계", res.monthlyAllowanceSum],
+    ["기타 수당", input.otherAllowance || 0],
     ["연간 수당 합계", res.yearlyAllowanceSum],
     ["비과세 수당(월)", res.nonTaxableMonthly],
     ["월 총지급액(세전)", res.monthlyGross],
     ["연 총지급액(세전)", res.annualGross],
     ["월 실수령액(추정)", res.monthlyNet],
     ["연 실수령액(추정)", res.annualNet],
-  ].forEach(([k,v])=>lines.push(`${csvEscape(k)},${formatNumberForCsv(v)}`));
+  ].forEach(([k, v]) => lines.push(`${csvEscape(k)},${formatNumberForCsv(v)}`));
   lines.push("");
 
   lines.push("월별 수당 내역");
@@ -337,7 +328,7 @@ function buildFriendlyCsv(last){
   lines.push("4대보험 공제 내역 (월 기준 · 추정)");
   lines.push("항목,금액(원)");
   if (res.deductions){
-    Object.keys(DEDUCTION_LABELS).forEach(k=>{
+    Object.keys(DEDUCTION_LABELS).forEach(k => {
       if (res.deductions[k] === undefined) return;
       lines.push(`${csvEscape(DEDUCTION_LABELS[k])},${formatNumberForCsv(res.deductions[k])}`);
     });
@@ -349,7 +340,7 @@ function buildFriendlyCsv(last){
   lines.push("소득세 및 지방소득세 (월 기준 · 추정)");
   lines.push("항목,값");
   if (res.tax){
-    Object.keys(TAX_LABELS).forEach(k=>{
+    Object.keys(TAX_LABELS).forEach(k => {
       if (res.tax[k] === undefined) return;
       lines.push(`${csvEscape(TAX_LABELS[k])},${formatNumberForCsv(res.tax[k])}`);
     });
@@ -365,9 +356,12 @@ function buildFriendlyCsv(last){
 }
 
 function downloadCsv(){
-  if (!lastResult) { alert("먼저 계산을 실행해주세요."); return; }
-  const { input } = lastResult;
+  if (!lastResult) {
+    alert("먼저 계산을 실행해주세요.");
+    return;
+  }
 
+  const { input } = lastResult;
   const csv = buildFriendlyCsv(lastResult);
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
 
@@ -393,20 +387,16 @@ async function init(){
   try {
     initData = await apiInit();
 
-    // year
     setOptions($("year"), initData.lookup?.year || ["2026"]);
 
-    // facility types
     const facilityTypes =
       initData.payMeta?.facilityTypes ||
       initData.lookup?.facility_type ||
       [];
     setOptions($("facilityType"), facilityTypes);
 
-    // allowance checks
     buildAllowanceChecks(initData.rules || []);
 
-    // cascade
     $("facilityType").addEventListener("change", onFacilityChange);
     $("grade").addEventListener("change", onGradeChange);
     onFacilityChange();
