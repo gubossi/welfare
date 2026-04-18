@@ -44,12 +44,35 @@ function renderKpis(res){
   const yearlyAllow = res.yearlyAllowanceSum;
 
   $("kpiBoxes").innerHTML = `
-    <div class="box"><div class="title">연 기본급</div><div class="value">${money(baseAnnual)}</div></div>
-    <div class="box"><div class="title">연 월수당 합계(×12)</div><div class="value">${money(monthlyAllowAnnual)}</div></div>
-    <div class="box"><div class="title">연 수당 합계(연단위)</div><div class="value">${money(yearlyAllow)}</div></div>
-    <div class="box"><div class="title">연 총지급(세전)</div><div class="value">${money(res.annualGross)}</div></div>
-    <div class="box"><div class="title">월 실수령(추정)</div><div class="value">${money(res.monthlyNet)}</div></div>
-    <div class="box"><div class="title">연 실수령(추정)</div><div class="value">${money(res.annualNet)}</div></div>
+    <div class="kpi-card kpi-card--blue">
+      <div class="kpi-title">월 실수령(추정)</div>
+      <div class="kpi-value">${money(res.monthlyNet)}</div>
+    </div>
+
+    <div class="kpi-card kpi-card--green">
+      <div class="kpi-title">연 실수령(추정)</div>
+      <div class="kpi-value">${money(res.annualNet)}</div>
+    </div>
+
+    <div class="kpi-card kpi-card--gold">
+      <div class="kpi-title">연 총지급(세전)</div>
+      <div class="kpi-value">${money(res.annualGross)}</div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-title">연 기본급</div>
+      <div class="kpi-value">${money(baseAnnual)}</div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-title">연 월수당 합계(×12)</div>
+      <div class="kpi-value">${money(monthlyAllowAnnual)}</div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-title">연 수당 합계(연단위)</div>
+      <div class="kpi-value">${money(yearlyAllow)}</div>
+    </div>
   `;
 }
 
