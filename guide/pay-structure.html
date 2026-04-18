@@ -3,72 +3,459 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>사회복지시설 종사자 내 급여 알아보기</title>
+  <title>인건비(급여) 구성 이해하기 | Welmoa</title>
   <meta name="description" content="사회복지시설 종사자 인건비(급여)의 구성 요소(기본급·수당·비과세)를 이해하기 쉽게 설명합니다." />
+  <link rel="stylesheet" href="https://tools.welmoa.kr/assets/site.css" />
+
   <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 16px; line-height: 1.65; color:#222; }
-    .wrap { max-width: 920px; margin: 0 auto; }
-    .card { border:1px solid #ddd; border-radius:14px; padding:16px; margin: 12px 0; background:#fff; }
-    .muted { color:#666; font-size: 13px; }
-    a.btn { display:inline-block; padding:10px 12px; border:1px solid #ddd; border-radius:10px; text-decoration:none; color:#111; background:#fff; }
-    h1 { font-size: 22px; margin: 0 0 10px; }
-    h2 { font-size: 16px; margin: 18px 0 8px; }
-    li, p { font-size: 14px; }
-    code { background:#f6f6f6; padding:2px 6px; border-radius:6px; }
+    :root {
+      --salary-accent: #3559a8;
+      --salary-accent-dark: #2c4a8a;
+      --salary-accent-soft: #edf3ff;
+      --salary-surface: #ffffff;
+      --salary-surface-soft: #f8fbff;
+      --salary-border: #dfe7f3;
+      --salary-text: #18212f;
+      --salary-muted: #637287;
+      --salary-shadow-soft: 0 10px 26px rgba(15, 23, 42, 0.05);
+      --salary-radius-xl: 24px;
+      --salary-max: 1180px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top left, rgba(53, 89, 168, 0.05), transparent 28%),
+        linear-gradient(180deg, #f7f9fc 0%, #f3f6fb 100%);
+      color: var(--salary-text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      line-height: 1.7;
+    }
+
+    .container {
+      width: min(var(--salary-max), calc(100% - 32px));
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .site-header {
+      position: relative;
+      top: auto;
+      z-index: 1;
+      background: #2c4058;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      box-shadow: none;
+    }
+
+    .header-inner {
+      min-height: 74px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding-top: 10px;
+      padding-bottom: 6px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #ffffff;
+      font-weight: 900;
+      font-size: 1.35rem;
+      letter-spacing: -0.02em;
+    }
+
+    .site-header nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .site-header nav a {
+      color: rgba(255,255,255,0.92);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.97rem;
+      padding: 10px 14px;
+      border-radius: 999px;
+      transition: 0.18s ease;
+    }
+
+    .site-header nav a:hover {
+      background: rgba(255,255,255,0.12);
+      color: #ffffff;
+    }
+
+    .guide-page {
+      padding: 10px 0 56px;
+    }
+
+    .hero {
+      margin-bottom: 24px;
+    }
+
+    .hero-card {
+      position: relative;
+      overflow: hidden;
+      padding: 36px 36px 34px;
+      border-radius: 30px;
+      background: linear-gradient(135deg, rgba(53, 89, 168, 0.98), rgba(88, 125, 206, 0.94));
+      color: #fff;
+      box-shadow: 0 24px 54px rgba(53, 89, 168, 0.24);
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      inset: auto -80px -80px auto;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.18);
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      margin-bottom: 14px;
+    }
+
+    .hero-card h1 {
+      margin: 0 0 12px;
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      line-height: 1.18;
+      letter-spacing: -0.03em;
+      color: #fff;
+    }
+
+    .lead {
+      margin: 0;
+      max-width: 760px;
+      color: rgba(255,255,255,0.92);
+      font-size: 1.03rem;
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      margin-top: 22px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+      min-height: 50px;
+      padding: 12px 18px;
+      border-radius: 999px;
+      font: inherit;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.18s ease;
+    }
+
+    .btn-primary {
+      border: none;
+      background: linear-gradient(135deg, var(--salary-accent), #4f72c8);
+      color: #fff;
+      box-shadow: 0 14px 26px rgba(53, 89, 168, 0.18);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      background: linear-gradient(135deg, var(--salary-accent-dark), #4567ba);
+    }
+
+    .btn-secondary {
+      border: 1px solid #cfe0ff;
+      background: #fff;
+      color: var(--salary-accent);
+    }
+
+    .btn-secondary:hover {
+      background: #f4f8ff;
+      border-color: #bdd2ff;
+      transform: translateY(-1px);
+    }
+
+    .section {
+      margin-top: 28px;
+    }
+
+    .section-title {
+      margin: 0 0 16px;
+      font-size: 1.7rem;
+      letter-spacing: -0.03em;
+      color: var(--salary-text);
+    }
+
+    .guide-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--salary-surface);
+      border: 1px solid var(--salary-border);
+      border-radius: var(--salary-radius-xl);
+      box-shadow: var(--salary-shadow-soft);
+      padding: 24px 26px;
+    }
+
+    .guide-card h2 {
+      margin: 0 0 10px;
+      font-size: 1.18rem;
+      font-weight: 900;
+      line-height: 1.35;
+      letter-spacing: -0.02em;
+      color: var(--salary-text);
+    }
+
+    .guide-card p,
+    .guide-card li,
+    .muted {
+      color: var(--salary-text);
+      line-height: 1.75;
+      font-size: 0.98rem;
+    }
+
+    .guide-card .muted {
+      color: var(--salary-muted);
+    }
+
+    .guide-card ul {
+      margin: 10px 0 0;
+      padding-left: 18px;
+    }
+
+    .guide-card li + li {
+      margin-top: 8px;
+    }
+
+    .quick-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .quick-link-card {
+      display: inline-flex;
+      align-items: center;
+      min-height: 46px;
+      padding: 0 16px;
+      border-radius: 999px;
+      border: 1px solid var(--salary-border);
+      background: var(--salary-surface-soft);
+      text-decoration: none;
+      color: var(--salary-text);
+      font-weight: 800;
+      transition: 0.18s ease;
+    }
+
+    .quick-link-card:hover {
+      background: #f2f7ff;
+      border-color: #c8d8f7;
+      transform: translateY(-1px);
+    }
+
+    code {
+      background: #f3f6fb;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 0.95em;
+    }
+
+    .site-footer {
+      margin-top: 48px;
+      border-top: 1px solid rgba(223, 231, 243, 0.9);
+      background: rgba(255, 255, 255, 0.78);
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding-top: 22px;
+      padding-bottom: 18px;
+      color: var(--salary-muted);
+      font-size: 0.95rem;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-links a {
+      color: var(--salary-muted);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .footer-links a:hover {
+      color: var(--salary-accent-dark);
+    }
+
+    @media (max-width: 720px) {
+      .container {
+        width: min(var(--salary-max), calc(100% - 20px));
+      }
+
+      .header-inner,
+      .footer-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .header-inner {
+        padding-top: 6px;
+        padding-bottom: 6px;
+      }
+
+      .hero-card {
+        padding: 26px 20px 24px;
+        border-radius: 24px;
+      }
+
+      .card {
+        padding: 20px 18px;
+      }
+
+      .site-header nav {
+        width: 100%;
+      }
+
+      .site-header nav a {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
-      <a class="btn" href="../index.html">메인</a>
-      <a class="btn" href="../calculator.html">급여 계산기</a>
-      <a class="btn" href="./insurance-tax.html">4대보험·세금</a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="https://tools.welmoa.kr/">Welmoa</a>
+      <nav>
+        <a href="https://tools.welmoa.kr/">홈</a>
+        <a href="https://tools.welmoa.kr/tools/">도구</a>
+        <a href="https://tools.welmoa.kr/blog/">콘텐츠</a>
+        <a href="https://tools.welmoa.kr/about/">소개</a>
+        <a href="https://tools.welmoa.kr/privacy/">개인정보처리방침</a>
+        <a href="https://tools.welmoa.kr/terms/">이용약관</a>
+      </nav>
     </div>
+  </header>
 
-    <div class="card">
-      <h1>인건비(급여) 구성 이해하기</h1>
-      <p class="muted">
-        급여는 “월급 하나”로 끝나지 않고, <b>기본급(호봉급) + 수당 ± 비과세 − 공제</b> 구조로 이해하는 것이 좋습니다
-      </p>
+  <main class="container guide-page">
+    <section class="hero">
+      <div class="hero-card">
+        <div class="badge">급여 가이드</div>
+        <h1>인건비(급여) 구성 이해하기</h1>
+        <p class="lead">
+          급여는 하나의 월급만으로 끝나지 않고, 기본급과 수당, 비과세, 공제 구조를 함께 이해하는 것이 중요합니다.
+        </p>
+        <div class="hero-actions">
+          <a class="btn-primary" href="https://tools.welmoa.kr/salary/">급여 계산기</a>
+          <a class="btn-secondary" href="https://tools.welmoa.kr/salary/guide/insurance-tax">4대보험·세금 보기</a>
+        </div>
+      </div>
+    </section>
 
-      <h2>1) 기본급(호봉급)</h2>
-      <ul>
-        <li>시설 유형·직급·호봉에 따라 정해지는 급여의 기준 금액입니다</li>
-        <li>계산기에서는 <code>시설유형/직급/호봉</code> 선택을 통해 해당 기본급을 가져옵니다</li>
-      </ul>
+    <section class="section">
+      <h2 class="section-title">급여 구성 요소</h2>
 
-      <h2>2) 수당</h2>
-      <p>대표적으로 다음과 같은 항목이 있습니다(기관/지자체에 따라 상이)</p>
-      <ul>
-        <li>가족수당</li>
-        <li>시간외근무수당</li>
-        <li>명절휴가비(연 2회 등)</li>
-        <li>기타 직무/특수근무 관련 수당</li>
-      </ul>
-      <p class="muted">
-        계산기에서는 일부 수당을 “포함 여부” 체크로 반영하며, 기관별 추가수당은 미포함입니다
-      </p>
+      <div class="guide-grid">
+        <div class="card guide-card">
+          <p class="muted">
+            급여는 “월급 하나”로 끝나지 않고, <b>기본급(호봉급) + 수당 ± 비과세 − 공제</b> 구조로 이해하는 것이 좋습니다.
+          </p>
+        </div>
 
-      <h2>3) 비과세(선택)</h2>
-      <ul>
-        <li>식대 등 일부 항목은 과세/공제 산정에서 제외될 수 있습니다</li>
-        <li>계산기에서는 <code>월 비과세 금액</code>을 직접 입력하여 추정 계산에 반영할 수 있습니다</li>
-      </ul>
+        <div class="card guide-card">
+          <h2>1) 기본급(호봉급)</h2>
+          <ul>
+            <li>시설 유형, 직급, 호봉에 따라 정해지는 급여의 기준 금액입니다.</li>
+            <li>계산기에서는 <code>시설유형 / 직급 / 호봉</code> 선택을 통해 해당 기본급을 가져옵니다.</li>
+          </ul>
+        </div>
 
-      <h2>4) 요약: 세전/실수령액 차이</h2>
-      <p>
-        세전 총지급액(기본급+수당)은 같아도, 비과세/공제/세금 조건에 따라 실수령액은 달라질 수 있습니다.
-      </p>
+        <div class="card guide-card">
+          <h2>2) 수당</h2>
+          <p>대표적으로 다음과 같은 항목이 있습니다. 기관이나 지자체에 따라 실제 항목은 다를 수 있습니다.</p>
+          <ul>
+            <li>가족수당</li>
+            <li>시간외근무수당</li>
+            <li>명절휴가비(연 2회 등)</li>
+            <li>기타 직무·특수근무 관련 수당</li>
+          </ul>
+          <p class="muted">
+            계산기에서는 일부 수당을 “포함 여부” 체크로 반영하며, 기관별 추가수당은 미포함입니다.
+          </p>
+        </div>
+
+        <div class="card guide-card">
+          <h2>3) 비과세(선택)</h2>
+          <ul>
+            <li>식대 등 일부 항목은 과세·공제 산정에서 제외될 수 있습니다.</li>
+            <li>계산기에서는 <code>월 비과세 금액</code>을 직접 입력하여 추정 계산에 반영할 수 있습니다.</li>
+          </ul>
+        </div>
+
+        <div class="card guide-card">
+          <h2>4) 요약: 세전 / 실수령액 차이</h2>
+          <p>
+            세전 총지급액(기본급 + 수당)은 같아도, 비과세 적용 여부와 공제, 세금 조건에 따라 실수령액은 달라질 수 있습니다.
+          </p>
+        </div>
+
+        <div class="card guide-card">
+          <h2>다음으로 읽으면 좋은 내용</h2>
+          <div class="quick-links">
+            <a class="quick-link-card" href="https://tools.welmoa.kr/salary/guide/insurance-tax">4대보험·세금 이해하기</a>
+            <a class="quick-link-card" href="https://tools.welmoa.kr/salary/">급여 계산기</a>
+          </div>
+        </div>
+
+        <div class="card guide-card">
+          <p class="muted">
+            ※ 본 페이지는 정보 제공 목적이며 실제 지급액은 기관 규정과 지자체 기준에 따라 달라질 수 있습니다.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>© Welmoa. 사회복지 실무자를 위한 도구와 정보 플랫폼</div>
+      <div class="footer-links">
+        <a href="https://tools.welmoa.kr/about/">소개</a>
+        <a href="https://tools.welmoa.kr/privacy/">개인정보처리방침</a>
+        <a href="https://tools.welmoa.kr/terms/">이용약관</a>
+        <a href="https://tools.welmoa.kr/blog/">콘텐츠 모음</a>
+      </div>
     </div>
-
-    <div class="card">
-      <h2>다음으로 읽으면 좋은 내용</h2>
-      <ul>
-        <li><a href="./insurance-tax.html">4대보험·세금(간이세액표) 이해하기</a></li>
-        <li><a href="../calculator.html">급여 계산기에서 확인하기</a></li>
-      </ul>
-      <p class="muted">※ 본 페이지는 정보 제공 목적이며 실제 지급액은 기관 규정에 따릅니다</p>
-    </div>
-  </div>
+  </footer>
 </body>
 </html>
