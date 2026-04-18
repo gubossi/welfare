@@ -1,738 +1,261 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>사회복지시설 종사자 급여 계산기 | Welmoa</title>
-  <meta
-    name="description"
-    content="사회복지시설 종사자 급여 구조를 이해하고 기본급, 수당, 공제, 실수령액을 확인할 수 있는 Welmoa 급여 계산기입니다."
-  />
-  <link rel="stylesheet" href="/assets/site.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>사회복지시설 종사자 급여 계산기 | Welmoa</title>
 
-  <style>
-    :root {
-      --salary-accent: #3559a8;
-      --salary-accent-dark: #2c4a8a;
-      --salary-bg-soft: #f5f8ff;
-      --salary-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
-    }
+<link rel="stylesheet" href="/assets/site.css" />
 
-    .salary-page {
-      padding-bottom: 32px;
-    }
+<style>
+:root{
+  --primary:#3559a8;
+  --bg:#f5f7fb;
+  --card:#ffffff;
+  --text:#111827;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+}
 
-    .salary-page .hero-card {
-      padding: 32px;
-    }
+body{
+  background:var(--bg);
+  margin:0;
+  font-family:system-ui, -apple-system;
+}
 
-    .salary-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.85fr);
-      gap: 20px;
-      align-items: start;
-    }
+.container{
+  max-width:1100px;
+  margin:0 auto;
+  padding:24px 16px;
+}
 
-    .salary-subgrid {
-      display: grid;
-      gap: 20px;
-    }
+/* HERO */
+.hero-card{
+  background:#fff;
+  border-radius:20px;
+  padding:32px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.06);
+  margin-bottom:24px;
+}
 
-    .salary-card-title {
-      margin: 0 0 14px;
-      font-size: 1.2rem;
-      font-weight: 800;
-      line-height: 1.35;
-      color: var(--text);
-    }
+.hero-card h1{
+  font-size:32px;
+  margin-bottom:10px;
+}
 
-    .salary-card-desc {
-      margin: -4px 0 16px;
-      color: var(--muted);
-      line-height: 1.65;
-      font-size: 0.96rem;
-    }
+.hero-actions{
+  margin-top:16px;
+  display:flex;
+  gap:10px;
+}
 
-    .salary-panel {
-      padding: 0;
-      overflow: hidden;
-    }
+/* GRID */
+.salary-layout{
+  display:grid;
+  grid-template-columns:1.2fr 0.8fr;
+  gap:24px;
+}
 
-    .salary-panel-header {
-      padding: 22px 24px 10px;
-      border-bottom: 1px solid var(--border);
-      background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
-    }
+/* CARD */
+.card{
+  background:#fff;
+  border-radius:18px;
+  padding:24px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.05);
+}
 
-    .salary-panel-body {
-      padding: 22px 24px 24px;
-    }
+/* FORM */
+.salary-form label{
+  font-weight:700;
+  font-size:14px;
+  display:block;
+  margin-bottom:6px;
+}
 
-    .salary-form-section + .salary-form-section {
-      margin-top: 20px;
-      padding-top: 20px;
-      border-top: 1px solid var(--border);
-    }
+.salary-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
 
-    .salary-section-label {
-      margin: 0 0 10px;
-      font-size: 0.98rem;
-      font-weight: 800;
-      color: var(--text);
-    }
+input, select{
+  width:100%;
+  height:44px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  padding:0 12px;
+}
 
-    .salary-help {
-      margin: 6px 0 0;
-      color: var(--muted);
-      font-size: 0.92rem;
-      line-height: 1.6;
-    }
+/* SECTION */
+.section-block{
+  margin-bottom:20px;
+}
 
-    .salary-form label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 700;
-      color: var(--text);
-    }
+/* BUTTON */
+#btnCalc{
+  background:var(--primary);
+  color:#fff;
+  border:none;
+  height:48px;
+  border-radius:999px;
+  font-weight:700;
+}
 
-    .salary-grid-2,
-    .salary-grid-3 {
-      display: grid;
-      gap: 14px;
-    }
+#btnDownload{
+  height:48px;
+  border-radius:999px;
+  border:1px solid var(--border);
+}
 
-    .salary-grid-2 {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+/* RESULT */
+.result-big{
+  font-size:32px;
+  font-weight:800;
+  margin-top:10px;
+}
 
-    .salary-grid-3 {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
+.result-card{
+  margin-top:14px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:16px;
+}
 
-    .salary-form input,
-    .salary-form select,
-    .salary-form textarea,
-    #btnCalc,
-    #btnDownload {
-      width: 100%;
-      border-radius: 12px;
-      font: inherit;
-    }
+/* TABLE */
+table{
+  width:100%;
+  border-collapse:collapse;
+}
 
-    .salary-form input,
-    .salary-form select,
-    .salary-form textarea {
-      border: 1px solid var(--border);
-      padding: 12px 14px;
-      line-height: 1.5;
-      background: #fff;
-      color: var(--text);
-      transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
-      box-sizing: border-box;
-    }
+td, th{
+  padding:10px;
+  border-bottom:1px solid #eee;
+}
 
-    .salary-form input:focus,
-    .salary-form select:focus,
-    .salary-form textarea:focus {
-      outline: none;
-      border-color: #bfd1f8;
-      box-shadow: 0 0 0 4px rgba(53, 89, 168, 0.12);
-    }
-
-    .salary-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 16px;
-    }
-
-    .salary-actions > * {
-      flex: 1 1 220px;
-    }
-
-    .btn-primary,
-    #btnCalc {
-      background: var(--salary-accent);
-      color: #fff;
-      border: none;
-      padding: 12px 16px;
-      border-radius: 999px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.18s ease;
-      box-shadow: 0 8px 20px rgba(53, 89, 168, 0.18);
-    }
-
-    .btn-primary:hover,
-    #btnCalc:hover {
-      background: var(--salary-accent-dark);
-      transform: translateY(-1px);
-    }
-
-    .btn-secondary,
-    #btnDownload {
-      background: #fff;
-      color: var(--salary-accent);
-      border: 1px solid #d9e6ff;
-      padding: 12px 16px;
-      border-radius: 999px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.18s ease;
-    }
-
-    .btn-secondary:hover,
-    #btnDownload:hover {
-      background: #f3f7ff;
-    }
-
-    .choice-pills,
-    .inline-checks {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .pill,
-    .check-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      min-height: 44px;
-      padding: 10px 14px;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      background: var(--surface-soft);
-      color: var(--text);
-      box-sizing: border-box;
-    }
-
-    .pill input,
-    .check-chip input {
-      width: auto;
-      margin: 0;
-      accent-color: var(--salary-accent);
-    }
-
-    #allowanceChecks {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    #allowanceChecks label {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      min-height: 42px;
-      margin: 0;
-      padding: 10px 14px;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      background: var(--surface-soft);
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    #allowanceChecks input {
-      width: auto;
-      margin: 0;
-      accent-color: var(--salary-accent);
-    }
-
-    .salary-status-wrap {
-      margin-top: 14px;
-    }
-
-    #status {
-      margin-top: 0;
-      color: var(--muted);
-    }
-
-    #error {
-      margin-top: 8px;
-    }
-
-    .result-summary {
-      display: grid;
-      gap: 14px;
-    }
-
-    .result-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: flex-start;
-    }
-
-    .result-badge {
-      display: inline-flex;
-      align-items: center;
-      min-height: 32px;
-      padding: 0 12px;
-      border-radius: 999px;
-      background: var(--salary-bg-soft);
-      color: var(--salary-accent);
-      font-weight: 800;
-      font-size: 0.92rem;
-    }
-
-    .result-card-box {
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      background: linear-gradient(180deg, #ffffff 0%, #fafcff 100%);
-      padding: 18px;
-    }
-
-    .result-card-box + .result-card-box {
-      margin-top: 14px;
-    }
-
-    .table-wrap {
-      margin-top: 10px;
-      overflow-x: auto;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: #fff;
-    }
-
-    #monthlyTable,
-    #yearlyTable,
-    #deductionTable,
-    #taxTable {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 280px;
-    }
-
-    #monthlyTable th,
-    #monthlyTable td,
-    #yearlyTable th,
-    #yearlyTable td,
-    #deductionTable th,
-    #deductionTable td,
-    #taxTable th,
-    #taxTable td {
-      padding: 12px 14px;
-      border-bottom: 1px solid #eef2f7;
-      text-align: left;
-      font-size: 0.96rem;
-    }
-
-    #monthlyTable tr:last-child td,
-    #yearlyTable tr:last-child td,
-    #deductionTable tr:last-child td,
-    #taxTable tr:last-child td {
-      border-bottom: none;
-    }
-
-    #monthlyTable th,
-    #yearlyTable th,
-    #deductionTable th,
-    #taxTable th {
-      background: #fafcff;
-      color: var(--text);
-      font-weight: 800;
-    }
-
-    .salary-note {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.95rem;
-      line-height: 1.7;
-    }
-
-    .quick-links {
-      display: grid;
-      gap: 12px;
-    }
-
-    .quick-link-card {
-      display: block;
-      background: var(--surface-soft);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px;
-      transition: all 0.18s ease;
-      text-decoration: none;
-    }
-
-    .quick-link-card:hover {
-      background: #fbfdff;
-      box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
-      transform: translateY(-1px);
-    }
-
-    .quick-link-card h3 {
-      margin: 0 0 6px;
-      font-size: 1rem;
-      color: var(--text);
-    }
-
-    .quick-link-card p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-
-    .notice-box {
-      margin-top: 12px;
-      padding: 14px 16px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: var(--surface-soft);
-    }
-
-    .notice-box-title {
-      margin: 0 0 8px;
-      font-weight: 800;
-      color: var(--text);
-    }
-
-    @media (max-width: 1024px) {
-      .salary-layout {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 720px) {
-      .salary-page .hero-card,
-      .salary-panel-header,
-      .salary-panel-body {
-        padding-left: 18px;
-        padding-right: 18px;
-      }
-
-      .salary-grid-2,
-      .salary-grid-3 {
-        grid-template-columns: 1fr;
-      }
-
-      .result-top {
-        flex-direction: column;
-      }
-
-      .salary-actions > * {
-        flex-basis: 100%;
-      }
-    }
-  </style>
+/* RESPONSIVE */
+@media(max-width:900px){
+  .salary-layout{
+    grid-template-columns:1fr;
+  }
+}
+</style>
 </head>
+
 <body>
-  <header class="site-header">
-    <div class="container header-inner">
-      <a class="brand" href="/">Welmoa</a>
-      <nav>
-        <a href="/">홈</a>
-        <a href="https://tools.welmoa.kr/tools/">도구</a>        
-        <a href="/blog/">콘텐츠</a>
-        <a href="/about/">소개</a>
-        <a href="/privacy/">개인정보처리방침</a>
-        <a href="/terms/">이용약관</a>
-      </nav>
+<div class="container">
+
+<!-- HERO -->
+<div class="hero-card">
+  <h1>사회복지시설 종사자 급여 계산기</h1>
+  <p>기본급, 수당, 공제 구조를 이해하고 실수령액을 빠르게 확인할 수 있습니다.</p>
+</div>
+
+<!-- MAIN -->
+<div class="salary-layout">
+
+<!-- LEFT (INPUT) -->
+<div class="card salary-form" id="inputCard">
+
+<div class="section-block">
+  <h3>기본 정보</h3>
+  <div class="salary-grid">
+    <div>
+      <label>기준년도</label>
+      <select id="year"></select>
     </div>
-  </header>
-  
-  <main class="container salary-page">
-    <section class="hero">
-      <div class="hero-card">
-        <div class="badge">급여 계산 도구</div>
-        <h1>사회복지시설 종사자 급여 계산기</h1>
-        <p class="lead">
-          기본급, 수당, 4대보험, 공제 구조를 이해하고 참고용 실수령액을 빠르게 확인할 수 있습니다.
-        </p>
-        <div class="hero-actions">
-          <a class="btn-primary" href="#salary-calculator">급여 계산하기</a>
-          <a class="btn-secondary" href="/blog/salary-guide.html">급여 가이드 보기</a>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="salary-calculator">
-      <h2 class="section-title">급여 계산</h2>
-
-      <div class="salary-layout">
-        <div class="card salary-panel salary-form">
-          <div class="salary-panel-header">
-            <h3 class="salary-card-title">기본 정보 입력</h3>
-            <p class="salary-card-desc">
-              기존 계산 기능은 그대로 유지하고, 입력 흐름만 Welmoa 카드형 구조에 맞게 정리했습니다.
-            </p>
-          </div>
-
-          <div class="salary-panel-body" id="inputCard">
-            <div class="salary-form-section">
-              <div class="salary-section-label">기본 정보</div>
-              <div class="salary-grid-2">
-                <div>
-                  <label for="year">기준년도</label>
-                  <select id="year"></select>
-                </div>
-                <div>
-                  <label for="facilityType">근무시설 유형</label>
-                  <select id="facilityType"></select>
-                </div>
-                <div>
-                  <label for="grade">직급</label>
-                  <select id="grade"></select>
-                </div>
-                <div>
-                  <label for="step">호봉</label>
-                  <select id="step"></select>
-                </div>
-              </div>
-            </div>
-
-            <div class="salary-form-section">
-              <div class="salary-section-label">비과세(선택)</div>
-              <div class="salary-grid-2">
-                <div>
-                  <label for="nonTaxableMonthly">월 비과세 금액(식대 등)</label>
-                  <input id="nonTaxableMonthly" type="number" min="0" value="0" />
-                </div>
-              </div>
-              <p class="salary-help">식대 등 비과세 항목이 있다면 월 기준 금액을 입력해 주세요.</p>
-            </div>
-
-            <div class="salary-form-section">
-              <div class="salary-section-label">가족수당 입력</div>
-              <div class="choice-pills" style="margin-bottom: 12px;">
-                <label class="pill" for="spouse">
-                  <input id="spouse" type="checkbox" />
-                  <span>배우자</span>
-                </label>
-              </div>
-
-              <div class="salary-grid-2">
-                <div>
-                  <label for="children">자녀 수</label>
-                  <input id="children" type="number" min="0" value="0" />
-                </div>
-                <div>
-                  <label for="otherDependents">기타 부양가족(최대 4)</label>
-                  <input id="otherDependents" type="number" min="0" max="4" value="0" />
-                </div>
-              </div>
-            </div>
-
-            <div class="salary-form-section">
-              <div class="salary-section-label">시간외수당 입력</div>
-              <div class="salary-grid-2">
-                <div>
-                  <label for="overtimeHours">월 시간외(시간)</label>
-                  <input id="overtimeHours" type="number" min="0" value="0" />
-                </div>
-                <div>
-                  <label for="overtimeKind">가산 종류</label>
-                  <select id="overtimeKind">
-                    <option value="1.5">연장/야간 (1.5배)</option>
-                    <option value="1.5">휴일 8시간 이내 (1.5배)</option>
-                    <option value="2.0">휴일 8시간 초과 (2.0배)</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div class="salary-form-section">
-              <div class="salary-section-label">수당 및 공제 옵션</div>
-              <label style="margin-bottom: 8px;">수당 포함</label>
-              <div id="allowanceChecks"></div>
-
-              <div class="inline-checks" style="margin-top: 14px;">
-                <label class="check-chip" for="includeDeductions">
-                  <input id="includeDeductions" type="checkbox" />
-                  <span>4대보험 공제(추정) 포함</span>
-                </label>
-                <label class="check-chip" for="includeTax">
-                  <input id="includeTax" type="checkbox" />
-                  <span>세금(간이세액표) 포함</span>
-                </label>
-              </div>
-
-              <p class="salary-help">※ 국세청의 근로소득 간이세액표를 참고합니다.</p>
-
-              <div class="salary-actions">
-                <button id="btnCalc" type="button">계산하기</button>
-                <button id="btnDownload" type="button">엑셀(CSV) 다운로드</button>
-              </div>
-
-              <div class="salary-status-wrap">
-                <div id="status" class="muted"></div>
-                <div id="error" class="error"></div>
-                <p class="salary-help">※ 계산이 실행되지 않거나 로딩이 지연될 경우, 잠시 후 다시 시도해 주세요.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="salary-subgrid">
-          <div class="card salary-panel">
-            <div class="salary-panel-header">
-              <h3 class="salary-card-title">계산 결과</h3>
-              <p class="salary-card-desc">결과값과 세부 내역을 오른쪽 카드에서 바로 확인할 수 있습니다.</p>
-            </div>
-
-            <div class="salary-panel-body">
-              <div id="resultCard" style="display:none;">
-                <div class="result-summary">
-                  <div class="result-top">
-                    <div>
-                      <div class="result-badge">결과</div>
-                      <div class="muted" id="resultMeta" style="margin-top: 8px;"></div>
-                    </div>
-                  </div>
-
-                  <div id="kpiBoxes"></div>
-
-                  <div class="result-card-box">
-                    <div class="salary-section-label">월 수당(내역)</div>
-                    <div class="table-wrap">
-                      <table id="monthlyTable"></table>
-                    </div>
-                  </div>
-
-                  <div class="result-card-box">
-                    <div class="salary-section-label">연 수당(내역)</div>
-                    <div class="table-wrap">
-                      <table id="yearlyTable"></table>
-                    </div>
-                  </div>
-
-                  <div id="deductionCard" class="result-card-box" style="display:none;">
-                    <div class="salary-section-label">4대보험 공제(추정) 내역</div>
-                    <div class="table-wrap">
-                      <table id="deductionTable"></table>
-                    </div>
-                    <p class="salary-help">※ 요율/상·하한/반올림은 설정값에 따라 일부 오차가 발생할 수 있습니다.</p>
-                  </div>
-
-                  <div id="taxCard" class="result-card-box" style="display:none;">
-                    <div class="salary-section-label">세금(근로소득간이세액표 기반) 내역</div>
-                    <div class="table-wrap">
-                      <table id="taxTable"></table>
-                    </div>
-                    <p class="salary-help">※ 근로소득간이세액표 기준 추정값입니다.</p>
-                  </div>
-
-                  <div class="notice-box">
-                    <div class="notice-box-title">안내</div>
-                    <div class="muted" id="noticeText"></div>
-                  </div>
-                </div>
-              </div>
-
-              <div id="resultEmpty" class="salary-note">
-                왼쪽 입력 항목을 설정한 뒤 <strong>계산하기</strong>를 누르면 예상 결과와 내역이 표시됩니다.
-              </div>
-            </div>
-          </div>
-
-          <div class="card">
-            <h3 class="salary-card-title">처음 방문하셨나요?</h3>
-            <p class="salary-note">
-              먼저 급여 구조와 공제 흐름을 이해한 뒤 계산기를 활용하면 결과를 더 쉽게 해석할 수 있습니다.
-            </p>
-
-            <div class="quick-links" style="margin-top: 14px;">
-              <a class="quick-link-card" href="/salary/guide/pay-structure.html">
-                <h3>급여 구조 이해하기</h3>
-                <p>기본급, 수당, 공제, 실수령액 흐름 정리</p>
-              </a>
-
-              <a class="quick-link-card" href="/salary/guide/insurance-tax.html">
-                <h3>4대보험 이해하기</h3>
-                <p>공제 구조와 실무 체크 포인트 확인</p>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <h2 class="section-title">안내 및 체크 포인트</h2>
-
-      <div class="salary-layout">
-        <div class="card">
-          <h3 class="salary-card-title">이 도구에서 제공하는 정보</h3>
-          <ul class="list-clean">
-            <li>기본급과 각종 수당 구조를 참고용으로 정리합니다.</li>
-            <li>공제 포함 여부에 따라 예상 실수령 흐름을 확인할 수 있습니다.</li>
-            <li>월/연 단위 수당 및 공제 내역을 나누어 볼 수 있습니다.</li>
-          </ul>
-
-          <h3 class="salary-card-title" style="margin-top: 24px;">자주 생기는 혼동 포인트</h3>
-          <ul class="list-clean">
-            <li>기본급과 실수령액은 다를 수 있습니다.</li>
-            <li>수당 포함 여부에 따라 결과가 달라질 수 있습니다.</li>
-            <li>실제 지급액은 기관 기준과 개인별 조건에 따라 차이가 날 수 있습니다.</li>
-          </ul>
-        </div>
-
-        <div class="card">
-          <h3 class="salary-card-title">바로가기</h3>
-
-          <div class="quick-links">
-            <a class="quick-link-card" href="/blog/salary-guide.html">
-              <h3>급여 계산 방법 총정리</h3>
-              <p>기본급, 수당, 공제 구조를 한 번에 이해하기</p>
-            </a>
-
-            <a class="quick-link-card" href="/blog/take-home-pay.html">
-              <h3>실수령액 계산 방법</h3>
-              <p>총지급액과 공제 흐름 쉽게 이해하기</p>
-            </a>
-
-            <a class="quick-link-card" href="/blog/family-allowance.html">
-              <h3>가족수당 지급 기준</h3>
-              <p>실무에서 자주 확인하는 수당 기준 정리</p>
-            </a>
-          </div>
-
-          <h3 class="salary-card-title" style="margin-top: 24px;">면책</h3>
-          <p class="salary-note">
-            본 도구는 급여 구조 이해와 참고용 계산을 위한 페이지입니다.
-            실제 지급액은 기관 기준, 지자체 추가수당, 과세 여부, 개인별 공제 조건 등에 따라 달라질 수 있습니다.
-          </p>
-        </div>
-      </div>
-    </section>
-  </main>
-
-    <footer class="site-footer">
-    <div class="container footer-inner">
-      <div>© Welmoa. 사회복지 실무자를 위한 도구와 정보 플랫폼</div>
-      <div class="footer-links">
-        <a href="/about/">소개</a>
-        <a href="/privacy/">개인정보처리방침</a>
-        <a href="/terms/">이용약관</a>
-        <a href="/blog/">콘텐츠 모음</a>
-      </div>
+    <div>
+      <label>시설 유형</label>
+      <select id="facilityType"></select>
     </div>
-    <div class="container" style="padding-bottom:24px; color:#777; font-size:13px;">
-      본 사이트는 사회복지 실무 정보 제공을 목적으로 운영됩니다.
+    <div>
+      <label>직급</label>
+      <select id="grade"></select>
     </div>
-  </footer>
+    <div>
+      <label>호봉</label>
+      <select id="step"></select>
+    </div>
+  </div>
+</div>
 
-  
-  <script src="./app.js"></script>
-  <script>
-    // 결과가 표시되면 빈 안내 문구를 숨기기 위한 보조 처리
-    (function () {
-      const resultCard = document.getElementById("resultCard");
-      const resultEmpty = document.getElementById("resultEmpty");
-      if (!resultCard || !resultEmpty) return;
+<div class="section-block">
+  <h3>비과세</h3>
+  <input id="nonTaxableMonthly" type="number" value="0"/>
+</div>
 
-      const observer = new MutationObserver(() => {
-        const isVisible = getComputedStyle(resultCard).display !== "none";
-        resultEmpty.style.display = isVisible ? "none" : "block";
-      });
+<div class="section-block">
+  <h3>가족수당</h3>
+  <label><input id="spouse" type="checkbox"/> 배우자</label>
+  <div class="salary-grid">
+    <input id="children" type="number" value="0"/>
+    <input id="otherDependents" type="number" value="0"/>
+  </div>
+</div>
 
-      observer.observe(resultCard, { attributes: true, attributeFilter: ["style", "class"] });
+<div class="section-block">
+  <h3>시간외</h3>
+  <div class="salary-grid">
+    <input id="overtimeHours" type="number" value="0"/>
+    <select id="overtimeKind">
+      <option value="1.5">1.5배</option>
+      <option value="2.0">2.0배</option>
+    </select>
+  </div>
+</div>
 
-      const isVisible = getComputedStyle(resultCard).display !== "none";
-      resultEmpty.style.display = isVisible ? "none" : "block";
-    })();
-  </script>
+<div class="section-block">
+  <h3>옵션</h3>
+  <div id="allowanceChecks"></div>
+
+  <label><input id="includeDeductions" type="checkbox"/> 4대보험 포함</label>
+  <label><input id="includeTax" type="checkbox"/> 세금 포함</label>
+</div>
+
+<div class="section-block">
+  <button id="btnCalc">계산하기</button>
+  <button id="btnDownload">엑셀 다운로드</button>
+</div>
+
+</div>
+
+<!-- RIGHT (RESULT) -->
+<div>
+
+<div class="card" id="resultCard" style="display:none;">
+  <h3>예상 실수령액</h3>
+  <div class="result-big" id="kpiBoxes"></div>
+
+  <div class="result-card">
+    <h4>월 수당</h4>
+    <table id="monthlyTable"></table>
+  </div>
+
+  <div class="result-card">
+    <h4>연 수당</h4>
+    <table id="yearlyTable"></table>
+  </div>
+
+  <div id="deductionCard" class="result-card" style="display:none;">
+    <h4>공제</h4>
+    <table id="deductionTable"></table>
+  </div>
+
+  <div id="taxCard" class="result-card" style="display:none;">
+    <h4>세금</h4>
+    <table id="taxTable"></table>
+  </div>
+
+</div>
+
+<div class="card" id="resultEmpty">
+  입력 후 계산을 눌러주세요
+</div>
+
+</div>
+
+</div>
+</div>
+
+<script src="./app.js"></script>
 </body>
 </html>
