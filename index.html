@@ -433,6 +433,119 @@
     </div>
   </header>
   
+<div class="container">
+
+<!-- HERO -->
+<div class="hero-card">
+  <h1>사회복지시설 종사자 급여 계산기</h1>
+  <p>기본급, 수당, 공제 구조를 이해하고 실수령액을 빠르게 확인할 수 있습니다.</p>
+</div>
+
+<!-- MAIN -->
+<div class="salary-layout">
+
+<!-- LEFT (INPUT) -->
+<div class="card salary-form" id="inputCard">
+
+<div class="section-block">
+  <h3>기본 정보</h3>
+  <div class="salary-grid">
+    <div>
+      <label>기준년도</label>
+      <select id="year"></select>
+    </div>
+    <div>
+      <label>시설 유형</label>
+      <select id="facilityType"></select>
+    </div>
+    <div>
+      <label>직급</label>
+      <select id="grade"></select>
+    </div>
+    <div>
+      <label>호봉</label>
+      <select id="step"></select>
+    </div>
+  </div>
+</div>
+
+<div class="section-block">
+  <h3>비과세</h3>
+  <input id="nonTaxableMonthly" type="number" value="0"/>
+</div>
+
+<div class="section-block">
+  <h3>가족수당</h3>
+  <label><input id="spouse" type="checkbox"/> 배우자</label>
+  <div class="salary-grid">
+    <input id="children" type="number" value="0"/>
+    <input id="otherDependents" type="number" value="0"/>
+  </div>
+</div>
+
+<div class="section-block">
+  <h3>시간외</h3>
+  <div class="salary-grid">
+    <input id="overtimeHours" type="number" value="0"/>
+    <select id="overtimeKind">
+      <option value="1.5">1.5배</option>
+      <option value="2.0">2.0배</option>
+    </select>
+  </div>
+</div>
+
+<div class="section-block">
+  <h3>옵션</h3>
+  <div id="allowanceChecks"></div>
+
+  <label><input id="includeDeductions" type="checkbox"/> 4대보험 포함</label>
+  <label><input id="includeTax" type="checkbox"/> 세금 포함</label>
+</div>
+
+<div class="section-block">
+  <button id="btnCalc">계산하기</button>
+  <button id="btnDownload">엑셀 다운로드</button>
+</div>
+
+</div>
+
+<!-- RIGHT (RESULT) -->
+<div>
+
+<div class="card" id="resultCard" style="display:none;">
+  <h3>예상 실수령액</h3>
+  <div class="result-big" id="kpiBoxes"></div>
+
+  <div class="result-card">
+    <h4>월 수당</h4>
+    <table id="monthlyTable"></table>
+  </div>
+
+  <div class="result-card">
+    <h4>연 수당</h4>
+    <table id="yearlyTable"></table>
+  </div>
+
+  <div id="deductionCard" class="result-card" style="display:none;">
+    <h4>공제</h4>
+    <table id="deductionTable"></table>
+  </div>
+
+  <div id="taxCard" class="result-card" style="display:none;">
+    <h4>세금</h4>
+    <table id="taxTable"></table>
+  </div>
+
+</div>
+
+<div class="card" id="resultEmpty">
+  입력 후 계산을 눌러주세요
+</div>
+
+</div>
+
+</div>
+</div>
 
 
     <footer class="site-footer">
