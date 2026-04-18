@@ -698,6 +698,59 @@
       padding-right: 10px;
     }
   }
+
+  /* 결과 안내 영역 */
+.result-empty {
+  border: 1px solid var(--salary-border);
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+}
+
+.result-empty-inner {
+  padding: 22px 20px;
+}
+
+/* 상단 배지 */
+.result-empty-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: var(--salary-accent-soft);
+  color: var(--salary-accent-dark);
+  font-size: 0.9rem;
+  font-weight: 900;
+  margin-bottom: 12px;
+}
+
+/* 제목 */
+.result-empty-title {
+  margin: 0 0 8px;
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--salary-text);
+  letter-spacing: -0.02em;
+}
+
+/* 설명 */
+.result-empty-desc {
+  margin: 0;
+  color: var(--salary-muted);
+  line-height: 1.7;
+}
+
+/* 리스트 */
+.result-empty-list {
+  margin: 14px 0 0;
+  padding-left: 18px;
+  color: var(--salary-text);
+}
+
+.result-empty-list li + li {
+  margin-top: 6px;
+}
 </style>
 </head>
 
@@ -916,9 +969,29 @@
                 </div>
               </div>
 
-              <div id="resultEmpty" class="salary-note">
-                aaㅇ
-              </div>
+              <div id="resultEmpty" class="result-empty card">
+  <div class="result-empty-inner">
+    
+    <div class="result-empty-badge">결과 안내</div>
+
+    <h4 class="result-empty-title">
+      입력 후 계산을 눌러주세요
+    </h4>
+
+    <p class="result-empty-desc">
+      왼쪽에서 기준년도, 시설유형, 직급, 호봉과 수당 옵션을 선택하면<br>
+      예상 실수령액과 세부 내역이 이 영역에 표시됩니다.
+    </p>
+
+    <ul class="result-empty-list">
+      <li>월 실수령액 (추정)</li>
+      <li>연 실수령액 (추정)</li>
+      <li>수당 및 공제 상세 내역</li>
+      <li>4대보험 및 세금 계산 결과</li>
+    </ul>
+
+  </div>
+</div>
             </div>
           </div>
 
