@@ -6,7 +6,7 @@
   <title>사회복지시설 종사자 급여 계산기 | Welmoa</title>
 
   <!-- SEO -->
-  <meta name="description" content="사회복지시설 종사자 급여 계산기. 기본급, 수당, 공제, 실수령액을 한 번에 확인하세요." />
+  <meta name="description" content="사회복지시설 종사자 급여 계산기. 보건복지부 인건비 가이드라인을 참고해 기본급, 가족수당, 시간외수당, 4대보험, 세금 공제와 예상 실수령액을 확인하세요." />
 
   <!-- 공통 스타일 -->
   <link rel="stylesheet" href="https://tools.welmoa.kr/assets/site.css" />
@@ -752,6 +752,78 @@
   margin-top: 6px;
 }
 
+
+  /* 애드센스 보완용 정보 콘텐츠 영역 */
+  .content-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .content-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .info-card {
+    padding: 24px 26px;
+  }
+
+  .info-card p {
+    margin: 0;
+    color: var(--salary-muted);
+    line-height: 1.75;
+  }
+
+  .info-card p + p {
+    margin-top: 12px;
+  }
+
+  .info-card h3 {
+    margin: 0 0 12px;
+  }
+
+  .info-card .list-clean {
+    margin-top: 8px;
+  }
+
+  .guide-note {
+    margin-top: 16px;
+    padding: 16px 18px;
+    border-radius: 16px;
+    border: 1px solid #cfe0ff;
+    background: #f6f9ff;
+    color: var(--salary-muted);
+    line-height: 1.7;
+  }
+
+  .keyword-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .keyword-chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 0 11px;
+    border-radius: 999px;
+    background: var(--salary-accent-soft);
+    color: var(--salary-accent-dark);
+    font-size: 0.88rem;
+    font-weight: 800;
+  }
+
+  @media (max-width: 900px) {
+    .content-grid-2,
+    .content-grid-3 {
+      grid-template-columns: 1fr;
+    }
+  }
+
 </style>
 </head>
 
@@ -781,8 +853,6 @@
 
 <!-- 이후 기존 salary 본문 그대로 유지 -->
 <main class="container salary-page">
-
-  <main class="container salary-page">
     <section class="hero">
       <div class="hero-card">
         <div class="badge">급여 계산 도구</div>
@@ -1038,51 +1108,160 @@
     </section>
 
     <section class="section">
-      <h2 class="section-title">안내 및 체크 포인트</h2>
+      <h2 class="section-title">사회복지사 급여 계산기 안내</h2>
 
-      <div class="salary-layout">
-        <div class="card" style="padding: 24px 26px;">
-          <h3 class="salary-card-title">이 도구에서 제공하는 정보</h3>
-          <ul class="list-clean">
-            <li>기본급과 각종 수당 구조를 참고용으로 정리합니다.</li>
-            <li>공제 포함 여부에 따라 예상 실수령 흐름을 확인할 수 있습니다.</li>
-            <li>월/연 단위 수당 및 공제 내역을 나누어 볼 수 있습니다.</li>
-          </ul>
-
-          <h3 class="salary-card-title" style="margin-top: 24px;">자주 생기는 혼동 포인트</h3>
-          <ul class="list-clean">
-            <li>기본급과 실수령액은 다를 수 있습니다.</li>
-            <li>수당 포함 여부에 따라 결과가 달라질 수 있습니다.</li>
-            <li>실제 지급액은 기관 기준과 개인별 조건에 따라 차이가 날 수 있습니다.</li>
-          </ul>
+      <div class="content-grid-2">
+        <div class="card info-card">
+          <h3 class="salary-card-title">이 계산기는 어떤 목적으로 사용하나요?</h3>
+          <p>
+            Welmoa 사회복지시설 종사자 급여 계산기는 사회복지 현장에서 자주 확인하는 기본급, 가족수당,
+            시간외근무수당, 기타 수당, 4대보험, 세금 공제 흐름을 한 화면에서 이해할 수 있도록 만든 참고용 도구입니다.
+            급여명세서를 처음 보는 종사자나 급여 업무를 맡은 실무자가 예상 실수령액의 구조를 빠르게 확인하는 데 도움을 주기 위한 페이지입니다.
+          </p>
+          <p>
+            실제 급여는 기관의 보수 규정, 지자체 추가수당, 보조금 지침, 비과세 적용 여부, 개인별 부양가족 조건에 따라 달라질 수 있습니다.
+            따라서 이 계산 결과는 확정 급여가 아니라 급여 구조를 이해하기 위한 참고값으로 활용하는 것이 좋습니다.
+          </p>
+          <div class="keyword-row">
+            <span class="keyword-chip">사회복지사 급여</span>
+            <span class="keyword-chip">실수령액 계산</span>
+            <span class="keyword-chip">4대보험 공제</span>
+            <span class="keyword-chip">시간외수당</span>
+          </div>
         </div>
 
-        <div class="card" style="padding: 24px 26px;">
-          <h3 class="salary-card-title">바로가기</h3>
-
-          <div class="quick-links">
-            <a class="quick-link-card" href="https://tools.welmoa.kr/blog/salary-guide.html">
-              <h3>급여 계산 방법 총정리</h3>
-              <p>기본급, 수당, 공제 구조를 한 번에 이해하기</p>
-            </a>
-
-            <a class="quick-link-card" href="https://tools.welmoa.kr/blog/take-home-pay.html">
-              <h3>실수령액 계산 방법</h3>
-              <p>총지급액과 공제 흐름 쉽게 이해하기</p>
-            </a>
-
-            <a class="quick-link-card" href="https://tools.welmoa.kr/blog/family-allowance.html">
-              <h3>가족수당 지급 기준</h3>
-              <p>실무에서 자주 확인하는 수당 기준 정리</p>
-            </a>
+        <div class="card info-card">
+          <h3 class="salary-card-title">계산에 포함되는 주요 항목</h3>
+          <ul class="list-clean">
+            <li>기준년도, 시설유형, 직급, 호봉에 따른 기본급 확인</li>
+            <li>가족수당, 시간외근무수당, 기타 수당 등 월 수당 반영</li>
+            <li>식대 등 월 비과세 금액 입력</li>
+            <li>국민연금, 건강보험, 장기요양보험, 고용보험 등 4대보험 공제 추정</li>
+            <li>근로소득세와 지방소득세 등 세금 공제 추정</li>
+            <li>월 단위와 연 단위 예상 지급액 및 실수령액 확인</li>
+          </ul>
+          <div class="guide-note">
+            입력값이 같더라도 실제 지급액은 기관별 지급 기준과 개인별 공제 조건에 따라 달라질 수 있습니다.
+            특히 지자체 처우개선비, 특수근무수당, 장기근속수당 등은 기관 내부 기준을 함께 확인해야 합니다.
           </div>
+        </div>
+      </div>
+    </section>
 
-          <h3 class="salary-card-title" style="margin-top: 24px;">면책</h3>
-          <p class="salary-note">
-            본 도구는 급여 구조 이해와 참고용 계산을 위한 페이지입니다.
-            실제 지급액은 기관 기준, 지자체 추가수당, 과세 여부, 개인별 공제 조건 등에 따라 달라질 수 있습니다.
+    <section class="section">
+      <h2 class="section-title">급여 계산 전 확인하면 좋은 내용</h2>
+
+      <div class="content-grid-3">
+        <div class="card info-card">
+          <h3 class="salary-card-title">1. 기본급과 실수령액은 다릅니다</h3>
+          <p>
+            기본급은 급여 계산의 출발점이지만 통장에 입금되는 금액과 같지는 않습니다.
+            실제 실수령액은 기본급과 수당을 더한 뒤 4대보험, 세금, 기타 공제 항목을 차감해 결정됩니다.
+            그래서 호봉표 금액만 보고 월급을 판단하면 실제 수령액과 차이가 생길 수 있습니다.
           </p>
         </div>
+
+        <div class="card info-card">
+          <h3 class="salary-card-title">2. 수당 반영 여부를 확인해야 합니다</h3>
+          <p>
+            사회복지시설 급여에는 가족수당, 시간외수당, 명절휴가비, 처우개선비, 특수근무수당 등 다양한 항목이 포함될 수 있습니다.
+            모든 기관이 동일한 수당을 지급하는 것은 아니므로 계산 전 현재 기관에서 실제로 적용되는 수당을 확인하는 것이 중요합니다.
+          </p>
+        </div>
+
+        <div class="card info-card">
+          <h3 class="salary-card-title">3. 공제 항목에 따라 금액이 달라집니다</h3>
+          <p>
+            급여가 증가하면 공제액도 함께 달라질 수 있습니다.
+            특히 시간외수당이나 기타 수당이 추가되면 총지급액은 늘지만 소득세, 지방소득세, 사회보험료도 함께 변동될 수 있어
+            실제 체감 증가액은 예상보다 작게 느껴질 수 있습니다.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">사회복지시설 급여 계산 실무 체크 포인트</h2>
+
+      <div class="salary-layout">
+        <div class="card info-card">
+          <h3 class="salary-card-title">자주 발생하는 실수</h3>
+          <ul class="list-clean">
+            <li>호봉 또는 직급을 잘못 선택해 기본급이 다르게 계산되는 경우</li>
+            <li>가족수당 대상자 변동을 반영하지 않는 경우</li>
+            <li>시간외근무 시간을 입력했지만 기관 인정 기준과 다른 경우</li>
+            <li>비과세 금액을 입력하지 않아 과세 기준이 실제와 달라지는 경우</li>
+            <li>4대보험 또는 세금 포함 여부를 선택하지 않고 결과를 비교하는 경우</li>
+          </ul>
+          <div class="guide-note">
+            급여 결과가 예상과 다르다면 먼저 기준년도, 시설유형, 직급, 호봉, 수당 포함 여부, 공제 포함 여부를 순서대로 확인해 보세요.
+          </div>
+        </div>
+
+        <div class="card info-card">
+          <h3 class="salary-card-title">이런 분들에게 유용합니다</h3>
+          <ul class="list-clean">
+            <li>급여명세서를 처음 확인하는 신입 사회복지사</li>
+            <li>호봉 변경 후 예상 실수령액을 알고 싶은 종사자</li>
+            <li>시간외근무수당 반영 후 월 급여 흐름을 확인하려는 실무자</li>
+            <li>사회복지시설 인건비 구조를 설명해야 하는 관리자</li>
+            <li>보조금 인건비 편성 전 대략적인 비용 구조를 확인하려는 담당자</li>
+          </ul>
+          <div class="guide-note">
+            계산 결과는 내부 검토와 설명 자료로 활용할 수 있지만, 최종 지급액은 반드시 기관의 인사·급여 담당자 또는 관련 지침을 통해 확인해야 합니다.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">함께 보면 좋은 급여 실무 콘텐츠</h2>
+
+      <div class="content-grid-3">
+        <a class="quick-link-card" href="https://tools.welmoa.kr/blog/salary-guide.html">
+          <h3>사회복지 종사자 급여 계산 방법 총정리</h3>
+          <p>기본급, 수당, 공제 구조를 처음부터 이해할 수 있는 급여 계산 입문 가이드</p>
+        </a>
+
+        <a class="quick-link-card" href="https://tools.welmoa.kr/blog/payslip-guide.html">
+          <h3>사회복지시설 급여명세서 보는 방법</h3>
+          <p>급여명세서에 표시되는 지급항목과 공제항목을 실무 기준으로 정리한 글</p>
+        </a>
+
+        <a class="quick-link-card" href="https://tools.welmoa.kr/blog/social-worker-net-pay-2026.html">
+          <h3>2026년 사회복지사 실수령액 예시</h3>
+          <p>호봉과 수당, 공제 조건에 따라 실수령액이 달라지는 이유를 예시로 확인</p>
+        </a>
+
+        <a class="quick-link-card" href="https://tools.welmoa.kr/blog/overtime-pay-guide.html">
+          <h3>사회복지사 시간외근무수당 계산 방법</h3>
+          <p>연장근무, 휴일근무, 야간근무 수당 계산 구조와 주의사항 정리</p>
+        </a>
+
+        <a class="quick-link-card" href="https://tools.welmoa.kr/blog/family-allowance.html">
+          <h3>가족수당 지급 기준 정리</h3>
+          <p>부양가족, 증빙서류, 중복지급 여부 등 가족수당 점검 포인트 확인</p>
+        </a>
+
+        <a class="quick-link-card" href="https://tools.welmoa.kr/blog/subsidy-labor-cost-guide.html">
+          <h3>보조금 인건비와 기관부담금 처리 실무</h3>
+          <p>공모사업과 보조금 사업에서 인건비와 기관부담금을 검토할 때 필요한 기준 정리</p>
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">안내 및 면책</h2>
+
+      <div class="card info-card">
+        <p>
+          Welmoa 급여 계산기는 사회복지시설 종사자의 급여 구조 이해를 돕기 위한 참고용 계산 도구입니다.
+          계산 결과는 입력값과 적용 기준에 따라 산출되는 예상치이며, 실제 급여 지급액을 보장하지 않습니다.
+        </p>
+        <p>
+          최종 급여는 보건복지부 인건비 가이드라인, 지자체 보조금 기준, 기관 내부 보수 규정, 개인별 공제 조건,
+          비과세 적용 여부 등에 따라 달라질 수 있습니다. 실제 지급 및 정산에는 소속 기관의 최신 기준을 반드시 확인해 주세요.
+        </p>
       </div>
     </section>
 
