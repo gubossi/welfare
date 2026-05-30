@@ -41,12 +41,13 @@
     }
 
     .site-header {
-      position: relative;
-      top: auto;
-      z-index: 1;
-      background: #2c4058;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      box-shadow: none;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid #e2e8f0;
+      box-shadow: 0 4px 24px rgba(15,23,42,0.04);
     }
 
     .header-inner {
@@ -64,7 +65,7 @@
       align-items: center;
       gap: 12px;
       text-decoration: none;
-      color: #ffffff;
+      color: #2563eb;
       font-weight: 900;
       font-size: 1.35rem;
       letter-spacing: -0.02em;
@@ -78,7 +79,7 @@
     }
 
     .site-header nav a {
-      color: rgba(255,255,255,0.92);
+      color: #334155;
       text-decoration: none;
       font-weight: 700;
       font-size: 0.97rem;
@@ -88,8 +89,8 @@
     }
 
     .site-header nav a:hover {
-      background: rgba(255,255,255,0.12);
-      color: #ffffff;
+      background: #eff6ff;
+      color: #2563eb;
     }
 
     .guide-page {
@@ -103,11 +104,14 @@
     .hero-card {
       position: relative;
       overflow: hidden;
-      padding: 36px 36px 34px;
-      border-radius: 30px;
-      background: linear-gradient(135deg, rgba(53, 89, 168, 0.98), rgba(88, 125, 206, 0.94));
-      color: #fff;
-      box-shadow: 0 24px 54px rgba(53, 89, 168, 0.24);
+      padding: 42px 42px 40px;
+      border-radius: 32px;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.14), transparent 34%),
+        linear-gradient(135deg, #eff6ff 0%, #ffffff 58%, #f8fafc 100%);
+      color: #0f172a;
+      border: 1px solid #dbeafe;
+      box-shadow: 0 20px 52px rgba(15,23,42,0.07);
     }
 
     .hero-card::after {
@@ -126,8 +130,8 @@
       min-height: 32px;
       padding: 0 12px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.18);
-      color: #fff;
+      background: #dbeafe;
+      color: #1d4ed8;
       font-size: 0.9rem;
       font-weight: 800;
       letter-spacing: -0.01em;
@@ -139,13 +143,13 @@
       font-size: clamp(2rem, 4vw, 2.8rem);
       line-height: 1.18;
       letter-spacing: -0.03em;
-      color: #fff;
+      color: #0f172a;
     }
 
     .lead {
       margin: 0;
       max-width: 760px;
-      color: rgba(255,255,255,0.92);
+      color: #475569;
       font-size: 1.03rem;
       line-height: 1.7;
     }
@@ -216,9 +220,9 @@
     .card {
       background: var(--salary-surface);
       border: 1px solid var(--salary-border);
-      border-radius: var(--salary-radius-xl);
-      box-shadow: var(--salary-shadow-soft);
-      padding: 24px 26px;
+      border-radius: 28px;
+      box-shadow: 0 16px 42px rgba(15,23,42,0.07);
+      padding: 28px 30px;
     }
 
     .guide-card h2 {
