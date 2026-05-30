@@ -22,19 +22,19 @@
 
 <style>
   :root {
-    --salary-accent: #3559a8;
-    --salary-accent-dark: #2c4a8a;
-    --salary-accent-soft: #edf3ff;
-    --salary-bg: #f4f7fb;
+    --salary-accent: #2563eb;
+    --salary-accent-dark: #1e3a8a;
+    --salary-accent-soft: #dbeafe;
+    --salary-bg: #f8fafc;
     --salary-surface: #ffffff;
     --salary-surface-soft: #f8fbff;
-    --salary-border: #dfe7f3;
-    --salary-text: #18212f;
-    --salary-muted: #637287;
-    --salary-shadow: 0 18px 44px rgba(15, 23, 42, 0.08);
-    --salary-shadow-soft: 0 10px 26px rgba(15, 23, 42, 0.05);
-    --salary-radius-xl: 24px;
-    --salary-radius-lg: 18px;
+    --salary-border: #e2e8f0;
+    --salary-text: #0f172a;
+    --salary-muted: #64748b;
+    --salary-shadow: 0 18px 48px rgba(15, 23, 42, 0.07);
+    --salary-shadow-soft: 0 16px 42px rgba(15, 23, 42, 0.07);
+    --salary-radius-xl: 28px;
+    --salary-radius-lg: 22px;
     --salary-radius-md: 14px;
     --salary-max: 1180px;
   }
@@ -43,8 +43,7 @@
 
   body {
     background:
-      radial-gradient(circle at top left, rgba(53, 89, 168, 0.05), transparent 28%),
-      linear-gradient(180deg, #f7f9fc 0%, #f3f6fb 100%);
+      linear-gradient(180deg, #f8fafc 0%, #ffffff 42%, #f8fafc 100%);
     color: var(--salary-text);
   }
 
@@ -57,20 +56,21 @@
   .site-header {
   position: relative;
   top: auto;
-  z-index: 1;
-  background: #2c4058;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid #e2e8f0;
   box-shadow: none;
 }
 
 .header-inner {
-  min-height: 74px;
+  min-height: 72px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  padding-top: 10px;
-  padding-bottom: 6px;
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 
 .brand {
@@ -78,10 +78,10 @@
   align-items: center;
   gap: 12px;
   text-decoration: none;
-  color: #ffffff;
+  color: #2563eb;
   font-weight: 900;
   font-size: 1.35rem;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
 
 .site-header nav {
@@ -92,7 +92,7 @@
 }
 
 .site-header nav a {
-  color: rgba(255,255,255,0.92);
+  color: #334155;
   text-decoration: none;
   font-weight: 700;
   font-size: 0.97rem;
@@ -102,8 +102,8 @@
 }
 
 .site-header nav a:hover {
-  background: rgba(255,255,255,0.12);
-  color: #ffffff;
+  background: #eff6ff;
+  color: #2563eb;
 }
 
   .salary-page {
@@ -119,9 +119,12 @@
     overflow: hidden;
     padding: 36px 36px 34px;
     border-radius: 30px;
-    background: linear-gradient(135deg, rgba(53, 89, 168, 0.98), rgba(88, 125, 206, 0.94));
-    color: #fff;
-    box-shadow: 0 24px 54px rgba(53, 89, 168, 0.24);
+    background:
+      radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 32%),
+      linear-gradient(135deg, #eff6ff 0%, #ffffff 58%, #f8fafc 100%);
+    color: #0f172a;
+    border: 1px solid #dbeafe;
+    box-shadow: 0 18px 48px rgba(15, 23, 42, 0.07);
   }
 
   .hero-card::after {
@@ -131,7 +134,7 @@
     width: 220px;
     height: 220px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(37, 99, 235, 0.08);
   }
 
   .badge {
@@ -140,8 +143,8 @@
     min-height: 32px;
     padding: 0 12px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.18);
-    color: #fff;
+    background: #dbeafe;
+    color: #1d4ed8;
     font-size: 0.9rem;
     font-weight: 800;
     letter-spacing: -0.01em;
@@ -153,13 +156,13 @@
     font-size: clamp(2rem, 4vw, 2.9rem);
     line-height: 1.18;
     letter-spacing: -0.03em;
-    color: #fff;
+    color: #0f172a;
   }
 
 .hero-card .lead {
   margin: 0;
   max-width: 780px;
-  color: #ffffff !important;
+  color: #475569 !important;
   font-size: 1.03rem;
   line-height: 1.7;
 }
@@ -357,7 +360,7 @@
   #btnCalc {
     appearance: none;
     border: none;
-    background: linear-gradient(135deg, var(--salary-accent), #4f72c8);
+    background: var(--salary-accent);
     color: #fff;
     min-height: 50px;
     padding: 12px 18px;
@@ -377,7 +380,7 @@
   .btn-primary:hover,
   #btnCalc:hover {
     transform: translateY(-1px);
-    background: linear-gradient(135deg, var(--salary-accent-dark), #4567ba);
+    background: var(--salary-accent-dark);
     box-shadow: 0 16px 32px rgba(53, 89, 168, 0.24);
   }
 
@@ -456,10 +459,10 @@
 }
 
 .kpi-card--blue {
-  background: linear-gradient(135deg, #3559a8, #4f72c8);
+  background: linear-gradient(135deg, #2563eb, #60a5fa);
   border: none;
   color: #fff;
-  box-shadow: 0 14px 28px rgba(53, 89, 168, 0.22);
+  box-shadow: 0 14px 28px rgba(37, 99, 235, 0.22);
 }
 
 .kpi-card--green {
@@ -618,7 +621,7 @@
   .site-footer {
     margin-top: 48px;
     border-top: 1px solid rgba(223, 231, 243, 0.9);
-    background: rgba(255, 255, 255, 0.78);
+    background: #ffffff;
   }
 
   .footer-inner {
@@ -871,7 +874,7 @@
         </p>
         <div class="hero-actions">
           <a class="btn-primary" href="#salary-calculator">급여 계산하기</a>
-          <a class="btn-secondary" href="https://tools.welmoa.kr/blog/salary-guide.html">급여 가이드 보기</a>
+          <a class="btn-secondary" href="https://blog.welmoa.kr/blog/">급여 가이드 보기</a>
         </div>
       </div>
     </section>
@@ -1242,7 +1245,7 @@
           <p>호봉과 수당, 공제 조건에 따라 실수령액이 달라지는 이유를 예시로 확인</p>
         </a>
 
-        <a class="quick-link-card" href="https://tools.welmoa.kr/blog/overtime-pay-guide.html">
+        <a class="quick-link-card" href="https://blog.welmoa.kr/blog/overtime-pay-guide/">
           <h3>사회복지사 시간외근무수당 계산 방법</h3>
           <p>연장근무, 휴일근무, 야간근무 수당 계산 구조와 주의사항 정리</p>
         </a>
