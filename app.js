@@ -242,6 +242,20 @@ async function onCalc(){
     $("noticeText").textContent = buildNotice();
 
     setStatus("완료");
+
+    if (typeof gtag === "function") {
+      gtag("event", "salary_calculate", {
+        tool: "salary",
+        year: input.year,
+        facility_type: input.facilityType,
+        grade: input.grade,
+        step: input.step,
+        include_deductions: input.includeDeductions,
+        include_tax: input.includeTax,
+        overtime_hours: input.overtime.hours
+      });
+    }
+
     $("resultCard").scrollIntoView({ behavior: "smooth", block: "start" });
 
   } catch (e) {
