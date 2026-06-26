@@ -389,6 +389,16 @@ function downloadCsv(){
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+
+  // ⭐ GA4 이벤트
+  if (typeof gtag === "function") {
+    gtag("event", "salary_csv_download", {
+      year: input.year,
+      facility_type: input.facilityType,
+      grade: input.grade,
+      step: input.step
+    });
+  }
 }
 
 /***********************
