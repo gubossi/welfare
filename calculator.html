@@ -2,14 +2,25 @@
 <html lang="ko">
 <head>
   <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-4TNGJX9WB9"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4TNGJX9WB9"></script>
+  <script is:inline>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
 
-  gtag('config', 'G-4TNGJX9WB9');
-</script>
+    gtag('config', 'G-4TNGJX9WB9');
+  </script>
+
+  <!-- Naver Analytics -->
+  <script src="https://wcs.pstatic.net/wcslog.js"></script>
+  <script is:inline>
+    if (!window.wcs_add) window.wcs_add = {};
+    window.wcs_add["wa"] = "c4e4f76e4b7f40";
+
+    if (window.wcs) {
+      wcs_do();
+    }
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>사회복지시설 종사자 급여 계산기 | Welmoa</title>
