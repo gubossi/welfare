@@ -201,6 +201,12 @@
     align-items: start;
   }
 
+  @media (min-width: 1025px) {
+    .salary-layout--equal {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
   .salary-subgrid {
     display: grid;
     gap: 22px;
@@ -1202,7 +1208,7 @@
     <section class="section">
       <h2 class="section-title">사회복지시설 급여 계산 실무 체크 포인트</h2>
 
-      <div class="salary-layout">
+      <div class="salary-layout salary-layout--equal">
         <div class="card info-card">
           <h3 class="salary-card-title">자주 발생하는 실수</h3>
           <ul class="list-clean">
