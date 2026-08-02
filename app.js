@@ -7,6 +7,12 @@ const API_URL = "https://welfare-pay-api.gubossi.workers.dev";
 let initData = null;
 let lastResult = null;
 
+window.WelmoaAnalytics?.configure({
+  toolId: "salary",
+  toolName: "salary_calculator",
+  toolVersion: "1.0"
+});
+
 /***********************
  * UI 유틸
  ***********************/
@@ -193,6 +199,10 @@ async function onCalc(){
   setError("");
   setStatus("계산 중...");
 
+  window.WelmoaAnalytics?.start({
+    tool_action: "calculate"
+  });
+
   try {
     const input = {
       year: $("year").value,
@@ -243,22 +253,39 @@ async function onCalc(){
 
     setStatus("완료");
 
-    if (typeof gtag === "function") {
-      gtag("event", "salary_calculate", {
-        tool: "salary",
-        year: input.year,
-        facility_type: input.facilityType,
-        grade: input.grade,
-        step: input.step,
-        include_deductions: input.includeDeductions,
-        include_tax: input.includeTax,
-        overtime_hours: input.overtime.hours
-      });
-    }
+    const analyticsParams = {
+      tool_action: "calculate",
+      year: input.year,
+      facility_type: input.facilityType,
+      grade: input.grade,
+      step: input.step,
+      include_deductions: input.includeDeductions,
+      include_tax: input.includeTax,
+      has_overtime: input.overtime.hours > 0
+    };
+
+    window.WelmoaAnalytics?.complete(analyticsParams);
+
+    // Backward compatibility: keep the legacy event during the migration window.
+    window.WelmoaAnalytics?.legacy("salary_calculate", {
+      tool: "salary",
+      year: input.year,
+      facility_type: input.facilityType,
+      grade: input.grade,
+      step: input.step,
+      include_deductions: input.includeDeductions,
+      include_tax: input.includeTax,
+      overtime_hours: input.overtime.hours
+    });
 
     $("resultCard").scrollIntoView({ behavior: "smooth", block: "start" });
 
   } catch (e) {
+    window.WelmoaAnalytics?.error({
+      tool_action: "calculate",
+      error_code: "calculation_failed",
+      error_message: e?.message || String(e)
+    });
     setStatus("");
     setError("조회 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.\n" + (e?.message || String(e)));
   }
