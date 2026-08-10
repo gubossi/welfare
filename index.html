@@ -327,6 +327,25 @@
 
   .is-hidden { display: none !important; }
 
+  .salary-extra-options {
+    margin-top: 14px;
+    border: 1px solid var(--salary-border);
+    border-radius: 14px;
+    background: var(--salary-surface-soft);
+    overflow: hidden;
+  }
+
+  .salary-extra-options summary {
+    padding: 13px 15px;
+    cursor: pointer;
+    font-weight: 900;
+    color: var(--salary-text);
+  }
+
+  .salary-extra-options-body {
+    padding: 2px 15px 15px;
+  }
+
   .salary-section-label {
     margin: 0 0 12px;
     font-size: 1rem;
@@ -1007,27 +1026,6 @@
               </div>
             </div>
 
-            <div class="salary-form-section is-hidden" id="seoulOptions">
-              <div class="salary-section-label">서울형 적용 조건</div>
-              <div class="inline-checks">
-                <label class="check-chip" for="isFacilityHead">
-                  <input id="isFacilityHead" type="checkbox" />
-                  <span>시설장입니다</span>
-                </label>
-                <label class="check-chip" for="managerAllowance">
-                  <input id="managerAllowance" type="checkbox" />
-                  <span>상근 시설장 관리자수당 적용</span>
-                </label>
-              </div>
-              <div class="salary-grid-2" style="margin-top: 14px;">
-                <div>
-                  <label for="adjustmentAllowance">월 조정수당</label>
-                  <input id="adjustmentAllowance" type="number" min="0" step="1000" value="0" />
-                </div>
-              </div>
-              <p class="salary-help">국·시비지원시설의 조정수당은 서울시 기본급과 해당 보건복지부 기본급의 차액을 확인해 입력해 주세요.</p>
-            </div>
-
             <div class="salary-form-section">
               <div class="salary-section-label">비과세(선택)</div>
               <div class="salary-grid-2">
@@ -1055,6 +1053,32 @@
     </div>
   </div>
   <p class="salary-help">급여표 외 지자체 지급 또는 기관 자체 지급 수당이 있다면 월 합산 금액을 입력해 주세요.</p>
+
+  <details class="salary-extra-options is-hidden" id="seoulExtraOptions">
+    <summary>서울형 추가 조건이 있나요?</summary>
+    <div class="salary-extra-options-body">
+      <div class="inline-checks is-hidden" id="seoulFacilityHeadWrap" style="margin-bottom: 14px;">
+        <label class="check-chip" for="managerAllowance">
+          <input id="managerAllowance" type="checkbox" />
+          <span>상근 시설장(관리자수당 22만원 적용 · 시간외수당 제외)</span>
+        </label>
+      </div>
+      <div class="salary-grid-2">
+        <div>
+          <label for="adjustmentAllowance">서울시 조정수당(월)</label>
+          <input
+            id="adjustmentAllowance"
+            type="number"
+            min="0"
+            step="1000"
+            value="0"
+            placeholder="예: 50000"
+          />
+        </div>
+      </div>
+      <p class="salary-help">국·시비지원시설의 조정수당은 서울시 기본급과 해당 보건복지부 기본급의 차액을 확인해 입력해 주세요.</p>
+    </div>
+  </details>
 </div>
 
 

@@ -176,6 +176,7 @@ function buildAllowanceChecks(rules){
       </label>`;
     wrap.appendChild(div);
   });
+  $("allow_OT")?.addEventListener("change", updateConditionalSeoulFields);
 }
 
 function getEnabledAllowances(){
@@ -200,7 +201,26 @@ function onFacilityChange(){
   const meta = standard === "SEOUL"
     ? initData.regionalPayMeta?.SEOUL
     : initData.payMeta;
-  const grades = meta?.gradesByFacility?.[facility] || [];
+  const grades = [...(meta?.gradesByFacility?.[facility] || [])];
+  const gradeOrderByFacility = standard === "SEOUL"
+    ? { [facility]: ["1급", "2급", "3급", "4급", "5급", "관리직", "기능직"] }
+    : {
+        "생활시설": ["원장", "사무국장", "과장/생활복지사", "선임생활지도원", "생활지도원_1", "생활지도원_2", "생활지도원_3", "관리직", "기능직"],
+        "이용시설_사회복지직": ["관장", "부장", "과장", "선임사회복지사", "사회복지사"],
+        "이용시설_일반직": ["관장", "사무국장", "1급", "2급", "3급", "4급", "5급"],
+        "이용시설_관리직": ["1급", "2급", "3급", "4급"],
+        "이용시설_사무직": ["1급", "2급", "3급", "4급"],
+        "이용시설_의료직": ["1급", "2급", "3급", "4급"]
+      };
+  const gradeOrder = gradeOrderByFacility[facility] || [];
+  grades.sort((a, b) => {
+    const ai = gradeOrder.indexOf(a);
+    const bi = gradeOrder.indexOf(b);
+    if (ai === -1 && bi === -1) return a.localeCompare(b, "ko");
+    if (ai === -1) return 1;
+    if (bi === -1) return -1;
+    return ai - bi;
+  });
   setOptions($("grade"), grades);
   onGradeChange();
 }
@@ -215,6 +235,21 @@ function onGradeChange(){
     ? regionalSteps.map(String)
     : Array.from({ length: maxStep }, (_, i) => String(i + 1));
   setOptions($("step"), steps);
+  updateConditionalSeoulFields();
+}
+
+function updateConditionalSeoulFields(){
+  const isSeoul = getPayStandard() === "SEOUL";
+  const grade = $("grade")?.value || "";
+  const canBeFacilityHead = isSeoul && ["1급", "2급"].includes(grade);
+  const overtimeEnabled = isSeoul && Boolean($("allow_OT")?.checked);
+
+  $("seoulFacilityHeadWrap").classList.toggle("is-hidden", !canBeFacilityHead);
+  $("overtimeWorkerTypeWrap").classList.toggle("is-hidden", !overtimeEnabled);
+
+  if (!canBeFacilityHead && $("managerAllowance")) {
+    $("managerAllowance").checked = false;
+  }
 }
 
 function onPayStandardChange(){
@@ -226,13 +261,14 @@ function onPayStandardChange(){
 
   setOptions($("year"), years);
   setOptions($("facilityType"), facilities);
-  $("seoulOptions").classList.toggle("is-hidden", !isSeoul);
-  $("overtimeWorkerTypeWrap").classList.toggle("is-hidden", !isSeoul);
+  $("seoulExtraOptions").classList.toggle("is-hidden", !isSeoul);
+  if (!isSeoul) $("seoulExtraOptions").open = false;
   $("payStandardHelp").textContent = isSeoul
     ? "2026년 서울시 사회복지시설 종사자 인건비 가이드라인을 적용합니다."
     : "시설 유형별 보건복지부 인건비 가이드라인을 적용합니다.";
   buildAllowanceChecks(initData.rules || []);
   onFacilityChange();
+  updateConditionalSeoulFields();
 }
 
 /***********************
@@ -247,6 +283,7 @@ async function onCalc(){
   });
 
   try {
+    const managerAllowance = $("managerAllowance")?.checked || false;
     const input = {
       payStandard: getPayStandard(),
       year: $("year").value,
@@ -259,8 +296,8 @@ async function onCalc(){
       nonTaxableMonthly: Number($("nonTaxableMonthly").value || 0),
       otherAllowance: Number($("otherAllowance")?.value || 0),
       adjustmentAllowance: Number($("adjustmentAllowance")?.value || 0),
-      managerAllowance: $("managerAllowance")?.checked || false,
-      isFacilityHead: $("isFacilityHead")?.checked || false,
+      managerAllowance,
+      isFacilityHead: managerAllowance,
       family: {
         spouse: $("spouse").checked,
         children: Number($("children").value || 0),
