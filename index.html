@@ -356,10 +356,11 @@
 
   .overtime-option {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 130px;
-    gap: 18px;
+    grid-template-columns: minmax(230px, 300px) 120px;
+    justify-content: start;
+    gap: 14px;
     align-items: center;
-    padding: 13px 15px;
+    padding: 11px 15px;
     border-bottom: 1px solid var(--salary-border);
   }
 
@@ -386,12 +387,20 @@
   }
 
   .overtime-hours-wrap label {
-    margin-bottom: 5px;
-    font-size: 0.82rem;
+    margin: 0;
+    white-space: nowrap;
+    font-size: 0.9rem;
   }
 
   .overtime-hours-wrap input {
     width: 100%;
+  }
+
+  .overtime-hours-wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 7px;
+    align-items: center;
   }
 
   .overtime-summary {
@@ -401,15 +410,45 @@
     line-height: 1.55;
   }
 
-  @media (max-width: 640px) {
+  .family-input-row {
+    display: grid;
+    grid-template-columns: auto 110px 170px;
+    justify-content: start;
+    gap: 16px;
+    align-items: end;
+  }
+
+  .family-spouse-field {
+    padding-bottom: 2px;
+  }
+
+  .family-spouse-field .pill {
+    margin: 0;
+    min-height: 52px;
+  }
+
+  .family-number-field input {
+    width: 100%;
+  }
+
+  @media (max-width: 480px) {
     .overtime-option {
-      grid-template-columns: minmax(0, 1fr) 96px;
+      grid-template-columns: minmax(0, 1fr) 88px;
       gap: 10px;
       padding: 12px;
     }
 
     .overtime-option .check-chip span {
       font-size: 0.9rem;
+    }
+
+    .family-input-row {
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .family-spouse-field {
+      grid-column: 1 / -1;
     }
   }
 
@@ -1151,19 +1190,18 @@
 
             <div class="salary-form-section">
               <div class="salary-section-label">가족수당 입력</div>
-              <div class="choice-pills" style="margin-bottom: 12px;">
-                <label class="pill" for="spouse">
-                  <input id="spouse" type="checkbox" />
-                  <span>배우자</span>
-                </label>
-              </div>
-
-              <div class="salary-grid-2">
-                <div>
+              <div class="family-input-row">
+                <div class="family-spouse-field">
+                  <label class="pill" for="spouse">
+                    <input id="spouse" type="checkbox" />
+                    <span>배우자</span>
+                  </label>
+                </div>
+                <div class="family-number-field">
                   <label for="children">자녀 수</label>
                   <input id="children" type="number" min="0" value="0" />
                 </div>
-                <div>
+                <div class="family-number-field">
                   <label for="otherDependents">기타 부양가족(최대 4)</label>
                   <input id="otherDependents" type="number" min="0" max="4" value="0" />
                 </div>
@@ -1179,8 +1217,8 @@
                     <span>연장·야간근무(1.5배)</span>
                   </label>
                   <div class="overtime-hours-wrap is-hidden" id="overtimeExtendedHoursWrap">
+                    <input id="overtimeExtendedHours" aria-label="연장·야간근무 시간" type="number" min="0" step="0.5" value="0" />
                     <label for="overtimeExtendedHours">시간</label>
-                    <input id="overtimeExtendedHours" type="number" min="0" step="0.5" value="0" />
                   </div>
                 </div>
                 <div class="overtime-option">
@@ -1189,8 +1227,8 @@
                     <span>휴일근무 8시간 이내(1.5배)</span>
                   </label>
                   <div class="overtime-hours-wrap is-hidden" id="overtimeHolidayWithinHoursWrap">
+                    <input id="overtimeHolidayWithinHours" aria-label="휴일근무 8시간 이내 시간" type="number" min="0" step="0.5" value="0" />
                     <label for="overtimeHolidayWithinHours">시간</label>
-                    <input id="overtimeHolidayWithinHours" type="number" min="0" step="0.5" value="0" />
                   </div>
                 </div>
                 <div class="overtime-option">
@@ -1199,8 +1237,8 @@
                     <span>휴일근무 8시간 초과분(2배)</span>
                   </label>
                   <div class="overtime-hours-wrap is-hidden" id="overtimeHolidayOverHoursWrap">
+                    <input id="overtimeHolidayOverHours" aria-label="휴일근무 8시간 초과분 시간" type="number" min="0" step="0.5" value="0" />
                     <label for="overtimeHolidayOverHours">시간</label>
-                    <input id="overtimeHolidayOverHours" type="number" min="0" step="0.5" value="0" />
                   </div>
                 </div>
               </div>

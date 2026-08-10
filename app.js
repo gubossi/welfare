@@ -204,12 +204,15 @@ function updateOvertimeUi(){
   });
 
   const totalHours = getTotalOvertimeHours();
+  const selectedCount = OVERTIME_TYPES.filter(type => $(type.enabledId)?.checked).length;
   const isSeoul = getPayStandard() === "SEOUL";
   const cap = $("overtimeWorkerType")?.value === "shift" ? 40 : 15;
   $("overtimeWorkerTypeWrap")?.classList.toggle("is-hidden", !(isSeoul && totalHours > 0));
 
   if (totalHours <= 0) {
-    $("overtimeSummary").textContent = "시간외근무 유형을 선택하면 시간 입력란이 표시됩니다.";
+    $("overtimeSummary").textContent = selectedCount > 0
+      ? "선택한 시간외근무 유형의 시간을 입력해 주세요."
+      : "시간외근무 유형을 선택하면 시간 입력란이 표시됩니다.";
   } else if (isSeoul && totalHours > cap) {
     $("overtimeSummary").textContent = `총 입력 ${totalHours}시간 · 인정 ${cap}시간 · 상한 초과 ${totalHours - cap}시간`;
   } else if (isSeoul) {
