@@ -21,6 +21,10 @@ const $ = (id) => document.getElementById(id);
 function setStatus(msg){ $("status").textContent = msg || ""; }
 function setError(msg){ $("error").textContent = msg || ""; }
 
+function getPayStandard(){
+  return document.querySelector('input[name="payStandard"]:checked')?.value || "MOHW";
+}
+
 function setOptions(el, arr){
   el.innerHTML = "";
   (arr || []).forEach(v => {
@@ -114,13 +118,14 @@ function escapeHtml(s){
   }[c]));
 }
 
-function buildNotice(){
+function buildNotice(res){
   return [
     "• 본 결과는 인건비 가이드라인 및 입력값을 바탕으로 산출한 ‘추정’ 값입니다.",
     "• 기타 수당은 사용자가 직접 입력한 월 기준 금액을 반영합니다.",
     "• 4대보험은 설정된 요율/반올림 규칙을 적용한 추정치입니다.",
     "• 세금(소득세/지방소득세)은 TAX_TABLE(간이세액표) 기반 추정치입니다.",
-    "• 지자체 추가수당, 기관 규정, 비과세 적용, 원천징수 방식 등에 따라 실제 지급액은 달라질 수 있습니다."
+    "• 지자체 추가수당, 기관 규정, 비과세 적용, 원천징수 방식 등에 따라 실제 지급액은 달라질 수 있습니다.",
+    ...(res?.calculationNotes || []).map(note => `• ${note}`)
   ].join("\n");
 }
 
@@ -153,7 +158,14 @@ async function apiCalc(input){
 function buildAllowanceChecks(rules){
   const wrap = $("allowanceChecks");
   wrap.innerHTML = "";
-  rules.forEach(r => {
+  const activeRules = getPayStandard() === "SEOUL"
+    ? [
+        { code: "HOLIDAY", name: "명절휴가비", unit: "yearly", enabledDefault: true },
+        { code: "FAMILY", name: "가족수당", unit: "monthly", enabledDefault: true },
+        { code: "OT", name: "시간외수당", unit: "monthly", enabledDefault: false }
+      ]
+    : rules;
+  activeRules.forEach(r => {
     const div = document.createElement("div");
     div.style.minWidth = "240px";
     div.innerHTML = `
@@ -168,7 +180,12 @@ function buildAllowanceChecks(rules){
 
 function getEnabledAllowances(){
   const enabled = {};
+  document.querySelectorAll('#allowanceChecks input[id^="allow_"]').forEach(el => {
+    const code = el.id.replace("allow_", "");
+    enabled[code] = el.checked;
+  });
   (initData?.rules || []).forEach(r => {
+    if (enabled[r.code] !== undefined) return;
     enabled[r.code] = $(`allow_${r.code}`)?.checked || false;
   });
   return enabled;
@@ -178,18 +195,44 @@ function getEnabledAllowances(){
  * 시설/직급/호봉 옵션 연동
  ***********************/
 function onFacilityChange(){
+  const standard = getPayStandard();
   const facility = $("facilityType").value;
-  const grades = initData.payMeta.gradesByFacility[facility] || [];
+  const meta = standard === "SEOUL"
+    ? initData.regionalPayMeta?.SEOUL
+    : initData.payMeta;
+  const grades = meta?.gradesByFacility?.[facility] || [];
   setOptions($("grade"), grades);
   onGradeChange();
 }
 
 function onGradeChange(){
+  const standard = getPayStandard();
   const facility = $("facilityType").value;
   const grade = $("grade").value;
-  const maxStep = initData.payMeta.maxStepByFacGrade?.[facility]?.[grade] || 31;
-  const steps = Array.from({ length: maxStep }, (_, i) => String(i + 1));
+  const regionalSteps = initData.regionalPayMeta?.SEOUL?.validStepsByFacGrade?.[facility]?.[grade];
+  const maxStep = initData.payMeta?.maxStepByFacGrade?.[facility]?.[grade] || 31;
+  const steps = standard === "SEOUL" && regionalSteps?.length
+    ? regionalSteps.map(String)
+    : Array.from({ length: maxStep }, (_, i) => String(i + 1));
   setOptions($("step"), steps);
+}
+
+function onPayStandardChange(){
+  const standard = getPayStandard();
+  const isSeoul = standard === "SEOUL";
+  const meta = isSeoul ? initData.regionalPayMeta?.SEOUL : initData.payMeta;
+  const years = isSeoul ? (meta?.years || ["2026"]) : (initData.lookup?.year || ["2026"]);
+  const facilities = meta?.facilityTypes || initData.lookup?.facility_type || [];
+
+  setOptions($("year"), years);
+  setOptions($("facilityType"), facilities);
+  $("seoulOptions").classList.toggle("is-hidden", !isSeoul);
+  $("overtimeWorkerTypeWrap").classList.toggle("is-hidden", !isSeoul);
+  $("payStandardHelp").textContent = isSeoul
+    ? "2026년 서울시 사회복지시설 종사자 인건비 가이드라인을 적용합니다."
+    : "시설 유형별 보건복지부 인건비 가이드라인을 적용합니다.";
+  buildAllowanceChecks(initData.rules || []);
+  onFacilityChange();
 }
 
 /***********************
@@ -205,6 +248,7 @@ async function onCalc(){
 
   try {
     const input = {
+      payStandard: getPayStandard(),
       year: $("year").value,
       facilityType: $("facilityType").value,
       grade: $("grade").value,
@@ -214,6 +258,9 @@ async function onCalc(){
       includeTax: $("includeTax").checked,
       nonTaxableMonthly: Number($("nonTaxableMonthly").value || 0),
       otherAllowance: Number($("otherAllowance")?.value || 0),
+      adjustmentAllowance: Number($("adjustmentAllowance")?.value || 0),
+      managerAllowance: $("managerAllowance")?.checked || false,
+      isFacilityHead: $("isFacilityHead")?.checked || false,
       family: {
         spouse: $("spouse").checked,
         children: Number($("children").value || 0),
@@ -222,6 +269,7 @@ async function onCalc(){
       overtime: {
         hours: Number($("overtimeHours").value || 0),
         kindMultiplier: Number($("overtimeKind").value || 1.5),
+        workerType: $("overtimeWorkerType")?.value || "general",
       }
     };
 
@@ -229,7 +277,8 @@ async function onCalc(){
     lastResult = { input, res };
 
     $("resultCard").style.display = "block";
-    $("resultMeta").textContent = `${input.year} · ${input.facilityType} · ${input.grade} · ${input.step}호봉`;
+    const standardName = input.payStandard === "SEOUL" ? "서울시 기준" : "보건복지부 기준";
+    $("resultMeta").textContent = `${standardName} · ${input.year} · ${input.facilityType} · ${input.grade} · ${input.step}호봉`;
 
     renderKpis(res);
     renderTable("monthlyTable", res.monthlyAllowances);
@@ -249,12 +298,13 @@ async function onCalc(){
       $("taxCard").style.display = "none";
     }
 
-    $("noticeText").textContent = buildNotice();
+    $("noticeText").textContent = buildNotice(res);
 
     setStatus("완료");
 
     const analyticsParams = {
       tool_action: "calculate",
+      pay_standard: input.payStandard,
       year: input.year,
       facility_type: input.facilityType,
       grade: input.grade,
@@ -269,6 +319,7 @@ async function onCalc(){
     // Backward compatibility: keep the legacy event during the migration window.
     window.WelmoaAnalytics?.legacy("salary_calculate", {
       tool: "salary",
+      pay_standard: input.payStandard,
       year: input.year,
       facility_type: input.facilityType,
       grade: input.grade,
@@ -332,6 +383,7 @@ function buildFriendlyCsv(last){
 
   lines.push("요약");
   [
+    ["급여 기준", input.payStandard === "SEOUL" ? "서울시 기준" : "보건복지부 기준"],
     ["기준년도", input.year],
     ["근무시설 유형", input.facilityType],
     ["직급", input.grade],
@@ -438,19 +490,15 @@ async function init(){
   try {
     initData = await apiInit();
 
-    setOptions($("year"), initData.lookup?.year || ["2026"]);
-
-    const facilityTypes =
-      initData.payMeta?.facilityTypes ||
-      initData.lookup?.facility_type ||
-      [];
-    setOptions($("facilityType"), facilityTypes);
-
-    buildAllowanceChecks(initData.rules || []);
+    // 구버전 API 응답에서도 기존 보건복지부 계산은 계속 동작한다.
+    initData.regionalPayMeta = initData.regionalPayMeta || {};
 
     $("facilityType").addEventListener("change", onFacilityChange);
     $("grade").addEventListener("change", onGradeChange);
-    onFacilityChange();
+    document.querySelectorAll('input[name="payStandard"]').forEach(el => {
+      el.addEventListener("change", onPayStandardChange);
+    });
+    onPayStandardChange();
 
     $("btnCalc").addEventListener("click", onCalc);
     $("btnDownload").addEventListener("click", downloadCsv);

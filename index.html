@@ -289,6 +289,44 @@
     border-top: 1px solid var(--salary-border);
   }
 
+  .standard-selector {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .standard-option {
+    position: relative;
+    display: block;
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .standard-option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .standard-option span {
+    display: block;
+    padding: 14px 16px;
+    border: 1px solid var(--salary-border);
+    border-radius: 14px;
+    background: var(--salary-surface-soft);
+    text-align: center;
+    font-weight: 900;
+  }
+
+  .standard-option input:checked + span {
+    color: #1d4ed8;
+    border-color: #8fb1f4;
+    background: #eaf2ff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.09);
+  }
+
+  .is-hidden { display: none !important; }
+
   .salary-section-label {
     margin: 0 0 12px;
     font-size: 1rem;
@@ -910,7 +948,7 @@
         <div class="badge">급여 모의 계산 도구</div>
         <h1>사회복지 종사자 급여 모의 계산기</h1>
         <p class="lead">
-          보건복지부 사회복지시설 인건비 가이드라인을 토대로 기본급, 수당, 4대보험, 공제 구조를 이해하고 참고용 실수령액을 빠르게 확인할 수 있습니다.
+          보건복지부 및 서울시 사회복지시설 인건비 가이드라인을 토대로 기본급, 수당, 4대보험, 공제 구조를 이해하고 참고용 실수령액을 빠르게 확인할 수 있습니다.
         </p>
         <div class="hero-actions">
           <a class="btn-primary" href="#salary-calculator">급여 모의 계산하기</a>
@@ -933,6 +971,21 @@
 
           <div class="salary-panel-body" id="inputCard">
             <div class="salary-form-section">
+              <div class="salary-section-label">어떤 급여 기준으로 계산할까요?</div>
+              <div class="standard-selector" id="payStandardSelector">
+                <label class="standard-option">
+                  <input type="radio" name="payStandard" value="MOHW" checked />
+                  <span>보건복지부 기준</span>
+                </label>
+                <label class="standard-option">
+                  <input type="radio" name="payStandard" value="SEOUL" />
+                  <span>서울시 기준</span>
+                </label>
+              </div>
+              <p class="salary-help" id="payStandardHelp">시설 유형별 보건복지부 인건비 가이드라인을 적용합니다.</p>
+            </div>
+
+            <div class="salary-form-section">
               <div class="salary-section-label">기본 정보</div>
               <div class="salary-grid-2">
                 <div>
@@ -952,6 +1005,27 @@
                   <select id="step"></select>
                 </div>
               </div>
+            </div>
+
+            <div class="salary-form-section is-hidden" id="seoulOptions">
+              <div class="salary-section-label">서울형 적용 조건</div>
+              <div class="inline-checks">
+                <label class="check-chip" for="isFacilityHead">
+                  <input id="isFacilityHead" type="checkbox" />
+                  <span>시설장입니다</span>
+                </label>
+                <label class="check-chip" for="managerAllowance">
+                  <input id="managerAllowance" type="checkbox" />
+                  <span>상근 시설장 관리자수당 적용</span>
+                </label>
+              </div>
+              <div class="salary-grid-2" style="margin-top: 14px;">
+                <div>
+                  <label for="adjustmentAllowance">월 조정수당</label>
+                  <input id="adjustmentAllowance" type="number" min="0" step="1000" value="0" />
+                </div>
+              </div>
+              <p class="salary-help">국·시비지원시설의 조정수당은 서울시 기본급과 해당 보건복지부 기본급의 차액을 확인해 입력해 주세요.</p>
             </div>
 
             <div class="salary-form-section">
@@ -1018,6 +1092,13 @@
                     <option value="1.5">연장/야간 (1.5배)</option>
                     <option value="1.5">휴일 8시간 이내 (1.5배)</option>
                     <option value="2.0">휴일 8시간 초과 (2.0배)</option>
+                  </select>
+                </div>
+                <div class="is-hidden" id="overtimeWorkerTypeWrap">
+                  <label for="overtimeWorkerType">서울형 시간외 상한 구분</label>
+                  <select id="overtimeWorkerType">
+                    <option value="general">일반직 (월 최대 15시간)</option>
+                    <option value="shift">교대근무·해당 조리직 (월 최대 40시간)</option>
                   </select>
                 </div>
               </div>
