@@ -161,8 +161,7 @@ function buildAllowanceChecks(rules){
   const activeRules = getPayStandard() === "SEOUL"
     ? [
         { code: "HOLIDAY", name: "명절휴가비", unit: "yearly", enabledDefault: true },
-        { code: "FAMILY", name: "가족수당", unit: "monthly", enabledDefault: true },
-        { code: "OT", name: "시간외수당", unit: "monthly", enabledDefault: false }
+        { code: "FAMILY", name: "가족수당", unit: "monthly", enabledDefault: true }
       ]
     : rules;
   activeRules.forEach(r => {
@@ -176,7 +175,48 @@ function buildAllowanceChecks(rules){
       </label>`;
     wrap.appendChild(div);
   });
-  $("allow_OT")?.addEventListener("change", updateConditionalSeoulFields);
+}
+
+const OVERTIME_TYPES = [
+  { enabledId: "overtimeExtendedEnabled", hoursId: "overtimeExtendedHours", wrapId: "overtimeExtendedHoursWrap", code: "EXTENDED_NIGHT", name: "연장·야간근무", multiplier: 1.5 },
+  { enabledId: "overtimeHolidayWithinEnabled", hoursId: "overtimeHolidayWithinHours", wrapId: "overtimeHolidayWithinHoursWrap", code: "HOLIDAY_WITHIN_8", name: "휴일근무 8시간 이내", multiplier: 1.5 },
+  { enabledId: "overtimeHolidayOverEnabled", hoursId: "overtimeHolidayOverHours", wrapId: "overtimeHolidayOverHoursWrap", code: "HOLIDAY_OVER_8", name: "휴일근무 8시간 초과분", multiplier: 2 }
+];
+
+function getOvertimeEntries(){
+  return OVERTIME_TYPES.map(type => ({
+    code: type.code,
+    name: type.name,
+    multiplier: type.multiplier,
+    hours: $(type.enabledId)?.checked ? Math.max(0, Number($(type.hoursId)?.value || 0)) : 0
+  })).filter(entry => entry.hours > 0);
+}
+
+function getTotalOvertimeHours(){
+  return getOvertimeEntries().reduce((sum, entry) => sum + entry.hours, 0);
+}
+
+function updateOvertimeUi(){
+  OVERTIME_TYPES.forEach(type => {
+    const checked = Boolean($(type.enabledId)?.checked);
+    $(type.wrapId)?.classList.toggle("is-hidden", !checked);
+    if (!checked && $(type.hoursId)) $(type.hoursId).value = "0";
+  });
+
+  const totalHours = getTotalOvertimeHours();
+  const isSeoul = getPayStandard() === "SEOUL";
+  const cap = $("overtimeWorkerType")?.value === "shift" ? 40 : 15;
+  $("overtimeWorkerTypeWrap")?.classList.toggle("is-hidden", !(isSeoul && totalHours > 0));
+
+  if (totalHours <= 0) {
+    $("overtimeSummary").textContent = "시간외근무 유형을 선택하면 시간 입력란이 표시됩니다.";
+  } else if (isSeoul && totalHours > cap) {
+    $("overtimeSummary").textContent = `총 입력 ${totalHours}시간 · 인정 ${cap}시간 · 상한 초과 ${totalHours - cap}시간`;
+  } else if (isSeoul) {
+    $("overtimeSummary").textContent = `총 입력 ${totalHours}시간 · 서울시 인정 상한 ${cap}시간`;
+  } else {
+    $("overtimeSummary").textContent = `총 시간외근무 ${totalHours}시간`;
+  }
 }
 
 function getEnabledAllowances(){
@@ -189,6 +229,9 @@ function getEnabledAllowances(){
     if (enabled[r.code] !== undefined) return;
     enabled[r.code] = $(`allow_${r.code}`)?.checked || false;
   });
+  if (getPayStandard() === "SEOUL") {
+    enabled.OT = getTotalOvertimeHours() > 0;
+  }
   return enabled;
 }
 
@@ -242,10 +285,9 @@ function updateConditionalSeoulFields(){
   const isSeoul = getPayStandard() === "SEOUL";
   const grade = $("grade")?.value || "";
   const canBeFacilityHead = isSeoul && ["1급", "2급"].includes(grade);
-  const overtimeEnabled = isSeoul && Boolean($("allow_OT")?.checked);
 
   $("seoulFacilityHeadWrap").classList.toggle("is-hidden", !canBeFacilityHead);
-  $("overtimeWorkerTypeWrap").classList.toggle("is-hidden", !overtimeEnabled);
+  updateOvertimeUi();
 
   if (!canBeFacilityHead && $("managerAllowance")) {
     $("managerAllowance").checked = false;
@@ -262,7 +304,7 @@ function onPayStandardChange(){
   setOptions($("year"), years);
   setOptions($("facilityType"), facilities);
   $("seoulExtraOptions").classList.toggle("is-hidden", !isSeoul);
-  if (!isSeoul) $("seoulExtraOptions").open = false;
+  $("seoulExtraOptions").open = false;
   $("payStandardHelp").textContent = isSeoul
     ? "2026년 서울시 사회복지시설 종사자 인건비 가이드라인을 적용합니다."
     : "시설 유형별 보건복지부 인건비 가이드라인을 적용합니다.";
@@ -304,8 +346,8 @@ async function onCalc(){
         otherDependents: Number($("otherDependents").value || 0),
       },
       overtime: {
-        hours: Number($("overtimeHours").value || 0),
-        kindMultiplier: Number($("overtimeKind").value || 1.5),
+        entries: getOvertimeEntries(),
+        hours: getTotalOvertimeHours(),
         workerType: $("overtimeWorkerType")?.value || "general",
       }
     };
@@ -532,6 +574,11 @@ async function init(){
 
     $("facilityType").addEventListener("change", onFacilityChange);
     $("grade").addEventListener("change", onGradeChange);
+    OVERTIME_TYPES.forEach(type => {
+      $(type.enabledId).addEventListener("change", updateOvertimeUi);
+      $(type.hoursId).addEventListener("input", updateOvertimeUi);
+    });
+    $("overtimeWorkerType").addEventListener("change", updateOvertimeUi);
     document.querySelectorAll('input[name="payStandard"]').forEach(el => {
       el.addEventListener("change", onPayStandardChange);
     });

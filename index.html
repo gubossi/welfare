@@ -346,6 +346,43 @@
     padding: 2px 15px 15px;
   }
 
+  .overtime-options {
+    display: grid;
+    gap: 10px;
+  }
+
+  .overtime-option {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(120px, 170px);
+    gap: 12px;
+    align-items: center;
+    padding: 12px 14px;
+    border: 1px solid var(--salary-border);
+    border-radius: 14px;
+    background: var(--salary-surface-soft);
+  }
+
+  .overtime-option .check-chip {
+    margin: 0;
+  }
+
+  .overtime-hours-wrap.is-hidden {
+    display: none !important;
+  }
+
+  .overtime-summary {
+    margin: 10px 0 0;
+    color: var(--salary-muted);
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+
+  @media (max-width: 640px) {
+    .overtime-option {
+      grid-template-columns: 1fr;
+    }
+  }
+
   .salary-section-label {
     margin: 0 0 12px;
     font-size: 1rem;
@@ -1105,24 +1142,45 @@
 
             <div class="salary-form-section">
               <div class="salary-section-label">시간외수당 입력</div>
-              <div class="salary-grid-2">
-                <div>
-                  <label for="overtimeHours">월 시간외(시간)</label>
-                  <input id="overtimeHours" type="number" min="0" value="0" />
+              <div class="overtime-options">
+                <div class="overtime-option">
+                  <label class="check-chip" for="overtimeExtendedEnabled">
+                    <input id="overtimeExtendedEnabled" type="checkbox" />
+                    <span>연장·야간근무(1.5배)</span>
+                  </label>
+                  <div class="overtime-hours-wrap is-hidden" id="overtimeExtendedHoursWrap">
+                    <label for="overtimeExtendedHours">시간</label>
+                    <input id="overtimeExtendedHours" type="number" min="0" step="0.5" value="0" />
+                  </div>
                 </div>
-                <div>
-                  <label for="overtimeKind">가산 종류</label>
-                  <select id="overtimeKind">
-                    <option value="1.5">연장/야간 (1.5배)</option>
-                    <option value="1.5">휴일 8시간 이내 (1.5배)</option>
-                    <option value="2.0">휴일 8시간 초과 (2.0배)</option>
-                  </select>
+                <div class="overtime-option">
+                  <label class="check-chip" for="overtimeHolidayWithinEnabled">
+                    <input id="overtimeHolidayWithinEnabled" type="checkbox" />
+                    <span>휴일근무 8시간 이내(1.5배)</span>
+                  </label>
+                  <div class="overtime-hours-wrap is-hidden" id="overtimeHolidayWithinHoursWrap">
+                    <label for="overtimeHolidayWithinHours">시간</label>
+                    <input id="overtimeHolidayWithinHours" type="number" min="0" step="0.5" value="0" />
+                  </div>
                 </div>
-                <div class="is-hidden" id="overtimeWorkerTypeWrap">
-                  <label for="overtimeWorkerType">서울형 시간외 상한 구분</label>
+                <div class="overtime-option">
+                  <label class="check-chip" for="overtimeHolidayOverEnabled">
+                    <input id="overtimeHolidayOverEnabled" type="checkbox" />
+                    <span>휴일근무 8시간 초과분(2배)</span>
+                  </label>
+                  <div class="overtime-hours-wrap is-hidden" id="overtimeHolidayOverHoursWrap">
+                    <label for="overtimeHolidayOverHours">시간</label>
+                    <input id="overtimeHolidayOverHours" type="number" min="0" step="0.5" value="0" />
+                  </div>
+                </div>
+              </div>
+              <p class="overtime-summary" id="overtimeSummary">시간외근무 유형을 선택하면 시간 입력란이 표시됩니다.</p>
+              <div class="salary-grid-2 is-hidden" id="overtimeWorkerTypeWrap" style="margin-top: 12px;">
+                <div>
+                  <label for="overtimeWorkerType">시간외 인정 상한 구분</label>
                   <select id="overtimeWorkerType">
-                    <option value="general">일반직 (월 최대 15시간)</option>
-                    <option value="shift">교대근무·해당 조리직 (월 최대 40시간)</option>
+                    <option value="general">일반 근무자(비교대·월 최대 15시간)</option>
+                    <option value="shift">직접돌봄 교대근무자·거주시설 조리직(월 최대 40시간)</option>
                   </select>
                 </div>
               </div>
