@@ -348,26 +348,50 @@
 
   .overtime-options {
     display: grid;
-    gap: 10px;
+    border: 1px solid var(--salary-border);
+    border-radius: 14px;
+    background: var(--salary-surface-soft);
+    overflow: hidden;
   }
 
   .overtime-option {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(120px, 170px);
-    gap: 12px;
+    grid-template-columns: minmax(0, 1fr) 130px;
+    gap: 18px;
     align-items: center;
-    padding: 12px 14px;
-    border: 1px solid var(--salary-border);
-    border-radius: 14px;
-    background: var(--salary-surface-soft);
+    padding: 13px 15px;
+    border-bottom: 1px solid var(--salary-border);
+  }
+
+  .overtime-option:last-child {
+    border-bottom: 0;
   }
 
   .overtime-option .check-chip {
     margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    justify-content: flex-start;
+  }
+
+  .overtime-option .check-chip:hover {
+    background: transparent;
   }
 
   .overtime-hours-wrap.is-hidden {
     display: none !important;
+  }
+
+  .overtime-hours-wrap label {
+    margin-bottom: 5px;
+    font-size: 0.82rem;
+  }
+
+  .overtime-hours-wrap input {
+    width: 100%;
   }
 
   .overtime-summary {
@@ -379,7 +403,13 @@
 
   @media (max-width: 640px) {
     .overtime-option {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr) 96px;
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .overtime-option .check-chip span {
+      font-size: 0.9rem;
     }
   }
 

@@ -163,7 +163,7 @@ function buildAllowanceChecks(rules){
         { code: "HOLIDAY", name: "명절휴가비", unit: "yearly", enabledDefault: true },
         { code: "FAMILY", name: "가족수당", unit: "monthly", enabledDefault: true }
       ]
-    : rules;
+    : rules.filter(rule => rule.code !== "OT");
   activeRules.forEach(r => {
     const div = document.createElement("div");
     div.style.minWidth = "240px";
@@ -229,9 +229,7 @@ function getEnabledAllowances(){
     if (enabled[r.code] !== undefined) return;
     enabled[r.code] = $(`allow_${r.code}`)?.checked || false;
   });
-  if (getPayStandard() === "SEOUL") {
-    enabled.OT = getTotalOvertimeHours() > 0;
-  }
+  enabled.OT = getTotalOvertimeHours() > 0;
   return enabled;
 }
 
